@@ -1,85 +1,89 @@
-# Перцептрон
+# Perceptron
 
-## Физиологические предпосылки
+## Physiological background
 
-Напомним, что в реальной жизни нейрон - это структура, состоящая в общем из сомы - тела, и наборов отростков: аксона и дендритов. По дендритам осуществляется передача сигналов в нейрон, а по единственному аксону - передача сигнала из нейрона в другие нейроны. Аксон при этом, может иметь множество отростков к другим нейронам. Передача сигнала от нейрона по аксону к другим нейронам осуществляется при "спайке", то есть превышении некоторого значения напряжения, подаваемого по дендритам. Учитывая различные свойства разных дендритов, передача сигналов различного напряжения через множество дендритов дает объемное пространство возможных состояний нейрона. 
+Recall that in real life a neuron is a structure consisting of a soma, i.e., a body, and sets of extensions, i.e., axon and dendrites. The dendrites carry signals to the neuron, and the single axon carries signals from the neuron to other neurons. Axon, meanwhile, can have many branches to other neurons. Signal transmission from a neuron via an axon to other neurons is carried out when there is a "spike", i.e. when a certain voltage value across the dendrites is exceeded. Considering different properties of different dendrites, the transmission of signals of different voltages through multiple dendrites gives a huge set of possible neuron states.
 
-## Математические предпосылки
+## Mathematical background
 
-Итак, теперь необходимо описать теоретическую модель нейрона, отбросив все лишнее. Наиболее важными свойствами нейрона остаются входные и выходной каналы, веса, связанные с входными каналами (различные свойства дендритов), и некоторое условие, при котором происходит передача импульса - активация нейрона. Таким образом нейрон можно представить следующей моделью:
+So, now it's necessary to describe the theoretical model of a neuron, leaving out everything excessive. The most important properties of a neuron remain the input and output, weights associated with the input channels (different properties of dendrites), and some condition under which impulse transmission occurs that is a neuron activation. Thus a neuron can be represented by the following model:
 
-- множество входных сигналов;
+- set of input signals;
 
-- множество вещественных значений - весов, которые определяют насколько тот или иной входной сигнал влияет на активацию нейрона;
+- set of real values - weights, which determine how much an input signal affects neuron activation;
 
-- сумматорная функция, складывающая все входные сигналы с учетом весов;
+- summatory function that adds up all input signals considering the weights;
 
-- функция активации, определяющая выход нейрона.
+- activation function, which determines the output of a neuron.
 
 <img src="misc/images/neuron_rus.png"  width="500">
 
-Тут важно понимать, что в реальной жизни процессы являются непрерывными, а не дискретными. Это означает, что импульс, передаваемый по дендритам и аксонам, в реальной жизни имеет не прямоугольную ступенчатую структуру, то есть не переходит из состояние 0 в состояние 1 сразу, а делает это плавно, хоть и очень быстро. Поэтому в математическом описании изменения импульса на каналах нейрона используют непрерывные нелинейные функции. Наиболее распространенным выбором **функции активации** (именно так называются функции, определяющие передачу сигнала по каналу) является сигмоидальная (логистическая) функция. 
+Here it is important to understand that in real life processes are continuous, not discrete. This means that the impulse transmitted by dendrites and axons in real life does not have a square wave structure, that means it does not go from state 0 to state 1 immediately, but does it smoothly, although very quickly. That is why continuous nonlinear functions are used in mathematical description of the impulse change on the neuron channels. The most common choice of **activation function** (this is the name of the functions that determine the signal transmission through the channel) is the sigmoid (logistic) function.
 
 $`f(x) = \frac{1}{1+e^{-x}}`$
 
 <img src="misc/images/logistic-curve.png"  width="400">
 
-Такая функция значительно увеличивает спектр применения нейронов, так как позволяет производить отображения из непрерывного интервала в непрерывный (а не из дискретного множества в дискретное). Определить значение выдаваемого на выход нейрона сигнала должна некоторая функция, задействующая все входные сигналы. Такой функцией является обычный сумматор, складывающий все значения дендритов и сравнивающий его с некоторым пороговым значением, которое и определяет сигмоидный выход всего нейрона. Таким образом нейрон, на основании полученных данных, может решать некоторую небольшую задачу, определяемую суммой входных данных и пороговым значением. На выходе он выдает значение от 0 до 1. 0 и 1 можно рассматривать как два различных класса, а все значения между ними - предположением нейрона о том, насколько близка такая конфигурация значений, полученных из дендритов, к первому или второму классу. Именно с этим моментом и связана критика перцептрона Минским и Папертом в 1969 году. Дело в том, что такой подход позволяет разделить два множество лишь линейно. То есть если перцептрон собирается сделать выбор между 0 и 1 классом, то его пороговое значение сумматора на самом деле представляет собой некоторую линию в пространстве входных значений. Например у нас есть два параметра и некоторые группы объектов, которые мы ожидаем увидеть в двух разных классах. Нейрон отработает корректно только в том случае, если на координатной плоскости с этими объектами можно провести прямую линию между ними. 
+This function significantly increases the range of neuron application, as it allows mappings from a continuous interval to a continuous one (instead of from discrete set to discrete). Some function, involving all input signals, should determine the value of the signal output of the neuron. This function is an adder that sums up all dendrite values and compares it to some threshold value, which determines the sigmoid output of the whole neuron. Thus, the neuron can solve some small problem, determined by the sum of the input data and the threshold value, using the received data. It outputs a value between 0 to 1. 0 and 1 can be seen as two different classes, and all values in between are the neuron's guess of how close this configuration of values obtained from the dendrites is to either the first or the second class.
+
+This is the reason why Minsky and Papert criticized the perceptron in 1969. The thing is that this approach allows you to separate the two sets only linearly. In other words, if the perceptron is going to make a choice between 0 and 1 class, its adder threshold is actually some line in the input value space. For example, we have two parameters and some groups of objects that we expect to see in two different classes. The neuron will only work correctly if a straight line can be drawn between these objects on the coordinate plane.
 
 <img src="misc/images/linear_partition.png"  width="500">
 
-Такой подход, например, не сработает с логическим выражением XOR 
+This approach, for example, will not work with XOR gate
 
 <img src="misc/images/xor_problem.png"  width="500">
 
-Обращаем внимание, что в общем случае, у нейрона значительно больше чем 2 дендрита, и тогда речь идет о линейном разделение гиперпространства гиперплоскостью. 
+Note that in general, a neuron has significantly more than 2 dendrites, and in that case we are talking about a linear division of the hyperspace by a hyperplane.
 
-Однако нейронные сети было бы удобно использовать как своего рода черный ящик, подавая на вход данные и получая ответ из ожидаемого множества. А так как далеко не каждая задача представляет возможность с ходу разделить линейно классы (а даже если и позволяет, тогда и нейронные сети скорее всего ни к чему) и количество классов может быть больше двух, нейроны объединяют в нейронные сети. Увеличивая нейронные сети в ширину (то есть создавая большое количество параллельных нейронов), сеть позволяет более подробно формировать вектор входных данных, а так же размерность множества классов. Напоминаем, что аналогично человеческому мозгу, наибольшую ценность представляют связи нейронов, так что сети могут быть достаточно плотно связаны вплоть до полносвязных. Увеличивая количество нейронов соответственно и увеличивается количество связей. Параллельные несвязанные между собой нейроны называются слоем. Слои принято разделять на несколько категорий: 
+However, neural networks would be convenient to use as a kind of black box, inputting data and getting a response from the expected set. And since not every task makes it possible to immediately divide classes linearly (and even if it does, then neural networks are most likely useless) and the number of classes can be more than two, neurons are combined into neural networks. Widening neural networks (that is, creating a large number of parallel neurons) allows the network to form a vector of input data in more detail, as well as the dimensionality of the class set. Recall that, like the human brain, neuronal connections are the most valuable, so that networks can be quite densely interconnected up to full connectivity.
+By increasing the number of neurons, the number of connections increases accordingly. Parallel unconnected neurons are called layers. Layers are usually divided into several categories:
 
-- Сенсорный слой, исключительно предназначенный для передачи входных параметров в удобном для пользователя количестве. Этот слой является буфером между пользовательским представлением о входных данных и их внутресетевым представлением.
+- A sensor (input) layer that is only meant for transmitting input parameters in a user-friendly quantity. This layer is a buffer between the user's representation of the input data and its intranet representation.
 
-- Множество скрытых слоев, осуществляющих перекодирование входных данных таким образом, чтобы они стали линейно разделимыми. Именно за счет увеличения количества скрытых слоев осуществляется решение проблемы о разделимости, так как во входных параметрах находятся более простые зависимости, позволяющие перевести входное множество в более многомерное пространство и разделить его намного более удачно.
+- Multiple hidden layers that recode the input data so that it becomes linearly separable. By increasing the number of hidden layers, the problem of separability is solved, because the input parameters contain simpler dependencies that allow you to translate the input set into a more multidimensional space and divide it much more efficiently.
 
-- Выходной слой, состоящий из числа нейронов, равного числу выходных классов. После срабатывания сети в каждом из выходных нейронов формируется выходной сигнал, который можно трактовать как вероятность соответствия входных данных этому классу.
+- An output layer, consisting of the number of neurons equal to the number of output classes. After the network is executed, each of the output neurons generates an output signal, which can be interpreted as a probability of matching the input data to this class.
 
-## Пример перцептрона
+## An example of a perceptron
 
 <img src="misc/images/mlp_scheme_rus.png"  width="900">
 
-Пусть нам необходимо классифицировать изображения с рукописными буками английского алфавита. В общем случае без учета регистра мы получаем 28 классов объектов. Это и есть размерность выходного слоя. Размерность входного слоя обусловлена размером обрабатываемых изображений (например, 12x12=144). Любые изображения можно нормировать к этому разрешению. Нормировке так же подлежат и значения интенсивности пикселей. После нормировки значений производится активация сети соответствующими значениями 144 сенсоров сети путем передачи им соответствующих нормированных значений 144 пикселей текущего изображения. После активации всех скрытых слоев формируется выходной вектор размерностью 28, каждый из элементов которого соответствует одной из 28 букв английского алфавита. Тот элемент, который после активации имеет наибольшее значение, отображает наиболее вероятный класс по "мнению" сети. Если обучение было проведено удачно, после активации сети изображением из примера сеть скорее всего отдаст предпочтение букве "S" (19 элемент при сохранении алфавитного порядка).
+Say we need to classify images with handwritten letters of the English alphabet. Generally, we get 28 classes of objects without case. This is the dimensionality of the output layer. The dimensionality of the input layer is determined by the size of the images to be processed (e.g., 12x12=144). Any images can be normalized to this resolution. Pixel intensity values are also to be normalized. After normalizing the values, the network is activated with 144 sensors of the network by transmitting to them the corresponding normalized values of 144 pixels of the current image. After activation of all the hidden layers, an output vector of 28 dimensions is formed, each element of which corresponds to one of the 28 letters of the English alphabet. The element that has the highest value after activation represents the most likely class according to the "opinion" of the network. If the training was successful, after activating the network with the image from the example, the network is likely to prefer the letter "S" (the 19th element if the alphabetical order is maintained).
 
-## Обучение
+## Training
 
-Обучение сети - это процесс, при котором происходит модификация весовых значений входных сигналов нейронов ассоциативных слоев. Модифицируются эти значения согласно некоторому отклонению полученных выходных сигналов сети от некоторых ожидаемых. То есть задача сводится к оптимизации некоторой ошибки сети - сведению ее к минимуму. Существует множество способов оценки работы сети, например, сумма квадратов расстояний ожидаемых значений и фактически полученных (метод наименьших квадратов). 
+Training a network is a process in which the input weights of neurons in associative layers are modified. These values are modified according to some deviation of received output signals of the network from some expected ones. That means that the problem is reduced to the optimization of some network error - bringing it to a minimum. There are many ways to estimate network performance, for example, the sum of distance squares of expected values and actually received values (least square method).
 
-С понятием перцептрона Румельхарта тесно связан качественно отличающийся от предлагаемого Розенблаттом подход к обучению таких перцептронов, хорошо подходящий для многослойной архитектуры. Это алгоритм обратного распространения ошибки. Так как функция ошибки (например по методу наименьших квадратов) зависит от множества аргументов, то есть, от выходов всех нейронов сети, даже промежуточных, то она представляет собой сложную функцию, которую можно описать некоторой поверхностью в многомерном пространстве. Задача оптимизации сводится к нахождению минимума на этой поверхности. Инициализированная некоторыми значениями весов нейронная сеть представляет собой лишь некоторую точку на этой поверхности, которая, в общем случае, совсем не обязательно является оптимальной. Для нахождения некоторого минимума на многомерной поверхности предлагается использовать алгоритм градиентного спуска. Градиент функции позволяет получить направление, в котором данная функция, описывающая поверхность, будет расти. Соответственно в обратном направлении поверхность будет убывать. В этом направлении и необходимо двигаться, чтобы получить некоторый минимум поверхности. Таким образом точка итеративно двигается с некоторым шагом гарантированно спускаясь вниз по гиперповерхности, так как пересчет градиента происходит на каждом шаге.
+The notion of Rumelhart's perceptron, which is well matched to the multilayer architecture, is closely related to the qualitatively different approach to training such perceptrons from Rosenblatt's one. This is a backpropagation algorithm. Since the error function (e.g. by least squares method) depends on many arguments, i.e. the outputs of all neurons of the network, even intermediate ones, it is a complex function that can be described by some surface in multidimensional space. The optimization problem is to find the minimum on this surface. A neural network initialized with some values of weights represents only some point on this surface, which, in general, is not necessarily optimal at all. To find some minimum on a multidimensional surface, it is suggested to use the gradient descent algorithm. The gradient of the function allows you to get the direction in which this function describing the surface will grow. Thus, in the opposite direction, the surface will decrease. This is the direction we need to move in order to get some minimum of the surface. This way the point iteratively moves with some step guaranteed to go down the hypersurface, since the gradient is recalculated at each step.
 
-Стоит отметить, что четкого алгоритма нахождения глобального минимума такой сложной функции не существует. Данный алгоритм, гарантирует лишь нахождение некоторого локального минимума, но есть целый ряд соображений, который позволяет увеличить вероятность нахождения более оптимальной точки минимума. В большинстве своем, это касается параметров обучения сети - весовых значений, которыми инициализируются сеть, и шага, с которым они меняются внутри сети. Шаг не должен быть слишком маленьким, тогда алгоритм будет реагировать на самые маленькие "впадины" поверхности и рискует остается в первой встречной и очень неглубокой точке минимума, но и не слишком большим, так как алгоритм может "перескочить" достаточно глубокие "впадины". Обычно размер шага может меняться в зависимости от исследования изменения значения ошибки (как, например, расстояния между полученными и ожидаемыми значениями по методу наименьших квадратов). Если ошибка практически не уменьшается в процессе обучения, скорее всего она попала в маленькую "складку" на гиперповерхности, или же, перескакивает через все большие "впадины". Так же возможна ситуация, при которых резко возрастают значения весов и темп обучения (уменьшения значения ошибки) практически становится равным нулю, это явление называется "параличом сети". Обычно "паралич сети" также обходится манипуляциями над шагом обучения.
+Note that there is no exact algorithm for finding the global minimum of such a complex function. This algorithm, guarantees only to find some local minimum, but there are a number of factors that increase the probability of finding a more optimal minimum point. For the most part, this refers to the training parameters of the network - the weights with which the network is initialized and the step at which they change within the network. The step should not be too small as the algorithm will react to the smallest "valley" of the surface and risks staying at the first encountered and very shallow minimum point, but also not too big, because the algorithm can "overshoot" quite deep "valleys". Usually the step size can vary depending on the study of the error value change (like the distance between the obtained and expected values by the least squares method). If the error does not practically decrease during the learning process, most likely it hit a small "fold" on the hypersurface, or, it overshoots all the big "valleys". It is also possible that the weights increase sharply and the learning rate (error reduction) becomes almost equal to zero. Usually it can be handled by manipulating the learning rate.
 
-Однако данные соображения применимы лишь к выходному слою, где точно известно ожидаемое значение. Модификация остальных слоев производится согласно алгоритму обратного распространения ошибки. 
+However, it applies only to the output layer, where the expected value is known precisely. The rest of the layers are modified according to the backpropagation algorithm.
 
-Пусть:
-- $`\eta`$ - скорость движения (шаг)
-- $`\delta_i`$ - значение ошибки для узла с индексом $`i`$
-- $`o_i`$ - выходное значение узла с индексом $`i`$
-- $`w_{ij}`$ - вес ребра, соединяющего узлы с индексами $`i`$ и $`j`$
-- $`Chlidren(j)`$ - функция, возвращающая те узлы, для которых узел $`j`$ является входным (то есть потомков узла $`j`$ в графовом представлении)
+Let:
+-$`\eta`$ - learning rate (step)
+- $`\delta_i`$ - the error value for the node with index $`i`$
+- $`o_i`$ - the output value of the node with index $`i`$
+- $`w_{ij}`$ - the weight of the edge connecting the nodes with indexes $`i`$ and $`j`$
+- $`Children(j)`$ - a function that returns those nodes for which $`j`$ is the input node (that is, the children of node $`j`$ in the graph representation)
 
-Алгоритм обратного распространения ошибки:
+The backpropagation algorithm:
 
-- 1. Инициализировать веса $`{w_{ij}}_{ij}`$ маленькиим случайными значениями;
-- 2. Повторить NUMBER_OF_STEPS раз:
-    - 2.1. Для всех d от 1 до m:
-        - 2.2.1. Выполнить активацию сети и получить выходные значения $`o_i`$ для каждого узла
-        - 2.2.2. для всех $`k \in Outputs`$
+- 1. Initialize the weights $`{w_{ij}}_{ij}`$ with small random values;
+- 2. Repeat NUMBER_OF_STEPS times:
+    - 2.1. For all d from 1 to m:
+        - 2.2.1. Activate the network and get the output values $`o_i`$ for each node
+        - 2.2.2. for all $`k \in Outputs`$
             - $`\delta_k = -o_k(1-o_k)(t_k-o_k)`$
-        - 2.2.3. для каждого слоя $`l`$ начиная с предпоследнего
-            - для каждого узла $`j`$ в слое $`l`$ вычислитить
+        - 2.2.3. for each layer $`l`$ starting from the penultimate
+            - for each node $`j`$ in layer $`l`$ calculate
                 - $`\delta_j = o_j(1-o_j)\sum_{k \in Children(j)} \delta_k w_{jk}`$
-        - 2.2.4.для каждого ребра сети $`{i,j}`$
+        - 2.2.4. for each edge of the network $`{i,j}`$
             - $`\Delta w_{ij}(n)=\alpha \Delta w_{ij} (n-1) + (1-\alpha)\eta \delta_j o_i`$
-            - $`w_{ij}(n) = w_{ij}(n-1) - \Delta w_{ij}(n)`$
+            - $`w_{ij}(n) = w_{ij}(n-1) - \Delta w_{ij}(n)`$,
 
-, где $`\alpha`$ - коэффициент инерциальности для сглаживания резких скачков при перемещении по поверхности целевой функции.
+where $`\alpha`$ is the inertia coefficient to smooth out sharp overshoots as you move across the surface of the objective function.
 
-Само обучение обычно выполняется **эпохами** на большой репрезентативной выборке. Выборку разделяют на две части: тестовая и обучающая (например, в соотношении 1:9 или 2:8). Обучение на тестовой выборке не проводят, она необходима для объективной оценки работы сети на данных, которые сеть никогда "не видела". Обучение производится через прогон элементов обучающей выборки в случайном порядке (шафл). Один прогон обучающей выборки обычно воспринимается как одна эпоха обучения. Количество эпох, необходимых для обучения, варьируется от конкретной задачи и выборки. При удачном подборе шага уже после первой эпохи будет заметен спад ошибки. Важно понимать, что любая выборка является конечным множеством и помимо полезной информации содержит в себе "шумы". Таким образом слишком долгое обучение сети на одной и той же выборке, пусть и с применением шафла, приведет к повышению чувствительности сети к стохастическим шумам экземпляров выборки, что не является целевой задачей. Все эти соображения выливаются в явление, которое происходит очень часто при "переобучении" сети, когда после некоторой эпохи размер ошибки на тестовой выборке начинает постепенно увеличиваться. Такое событие - явный индикатор того, что выборка исчерпала себя и дальнейшее обучение на той же самой выборке бессмысленно. 
+The learning itself is usually performed in **epochs** on a large representative sample. The sample is divided into two parts: test and training (for example, in the ratio of 1:9 or 2:8). Learning on the test sample is not carried out, it is necessary for an objective assessment of the network on the data, which the network has never "seen". Learning is performed by running the elements of the training sample by shuffle. One run of a training sample is usually considered as one epoch of learning.
+The number of epochs needed for learning varies with the specific task and sample. If the step is successfully chosen, you will already see the error reduction after the first epoch. It is important to understand that any sample is a finite set and contains "noise" apart from useful information. So having the network train too long on the same sample, even if using shuffle, will increase the sensitivity of the network to the stochastic noise of the sample instances, which is not the objective. All these factors lead to the phenomenon that happens very often during "retraining" of the network, when after some epoch the error size on the test sample starts to gradually increase. That is an obvious indicator that the sample has exhausted itself and further training on the same sample is pointless.
