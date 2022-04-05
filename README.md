@@ -1,5 +1,8 @@
 # Multilayer Perceptron
 
+> При старте работы над проектом просим вас постараться хронометрировать время работы над проектом.
+> По завершении работы над проектом просим вас ответить на два вопроса [в этом опросе](https://forms.gle/2kH5iMWABCnspGEX7)
+
 Implementation of a basic multilayer perceptron.
 
 The russian version of the task can be found in the repository.
