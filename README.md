@@ -22,6 +22,8 @@ The russian version of the task can be found in the repository.
 
 ## Chapter I
 
+![MLP](misc/images/mlp.png)
+
 Somewhere these days:
 
 The massive door to the spacious atrium closed behind you automatically.
