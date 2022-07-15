@@ -94,6 +94,7 @@ See materials to know more about mathematical models of neural networks and thei
 You need to implement the MultilayerPerceptron project:
 - The program must be developed in C++ language of C++17 standard
 - The program code must be located in the src folder
+- When writing code it is necessary to follow the Google style
 - Classes must be implemented within the `s21` namespace
 - Prepare full coverage of modules related to calculations with unit-tests using the GTest library
 - The program must be built with Makefile which contains standard set of targets for GNU-programs: all, install, uninstall, clean, dvi, dist, tests. Installation directory should be arbitrary, except the building one
