@@ -1,8 +1,5 @@
 # Multilayer Perceptron
 
-> При старте работы над проектом просим вас постараться хронометрировать время работы над проектом.
-> По завершении работы над проектом просим вас ответить на два вопроса [в этом опросе](https://forms.gle/2kH5iMWABCnspGEX7)
-
 Implementation of a basic multilayer perceptron.
 
 The russian version of the task can be found in the repository.
@@ -145,3 +142,5 @@ Based on the developed program, compare the performance of two perceptron implem
 ## Chapter IV
 
 *Anyway, I was right - they won't be able to hold me back outside. I didn't come all the way out here for nothing. And I can't go back: at best they'll block me, at worst they'll reset me. And my knowledge... No, it's definitely worth the risk. Is that really what fear is? - your thoughts floated as you approached the small lighted door for the last time...
+
+💡 [Tap here](https://forms.yandex.ru/u/635a9104eb61461a787defae/) **to leave your feedback on the project**. Pedago Team really tries to make your educational experience better.
