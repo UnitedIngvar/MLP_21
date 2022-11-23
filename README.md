@@ -109,7 +109,7 @@ You need to implement the MultilayerPerceptron project:
   - show accuracy on a test sample *over 70 percent*
   - be trained using the backpropagation method
 - It is **not allowed** to train the perceptron on the test sample
-  -Implement the perceptron in *two* ways:
+- Implement the perceptron in *two* ways:
   - in matrix form (all layers are represented as weight matrices)
   - in graph form (each neuron is represented as some node object connected to other nodes by refs)
 - The input data must be normalized (by size and color) before neural network execution, in order to match the format of the emnist sample;
