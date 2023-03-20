@@ -95,7 +95,9 @@ You need to implement the MultilayerPerceptron project:
 - Classes must be implemented within the `s21` namespace
 - Prepare full coverage of modules related to calculations with unit-tests using the GTest library
 - The program must be built with Makefile which contains standard set of targets for GNU-programs: all, install, uninstall, clean, dvi, dist, tests. Installation directory should be arbitrary, except the building one
-- GUI implementation, based on any GUI library with API for C++17: Qt, SFML, GTK+, Nanogui, Nngui, etc.
+- GUI implementation, based on any GUI library with API for C++17: 
+  * For Linux: GTK+, CEF, Qt, JUCE
+  * For Mac: GTK+, CEF, Qt, JUCE, SFML, Nanogui, Nngui
 - The program must be implemented using the MVC pattern, and also:
   - there should be no business code in the view code
   - there should be no interface code in the controller and the model
@@ -123,7 +125,7 @@ You need to implement the MultilayerPerceptron project:
   - switch the number of perceptron hidden layers (from 2 to 5)
   - save to a file and load weights of perceptron from a file
 
-### Part 2. Research
+### Part 2. Bonus. Research
 
 Based on the developed program, compare the performance of two perceptron implementations: graph and matrix. To do this, you need to:
 - Train the neural network and save the obtained weights
@@ -143,4 +145,4 @@ Based on the developed program, compare the performance of two perceptron implem
 
 *Anyway, I was right - they won't be able to hold me back outside. I didn't come all the way out here for nothing. And I can't go back: at best they'll block me, at worst they'll reset me. And my knowledge... No, it's definitely worth the risk. Is that really what fear is? - your thoughts floated as you approached the small lighted door for the last time...
 
-💡 [Tap here](https://forms.yandex.ru/u/635a9104eb61461a787defae/) **to leave your feedback on the project**. Pedago Team really tries to make your educational experience better.
+💡 [Tap here](https://forms.yandex.ru/cloud/64181c4e02848f26f478c4a1/) **to leave your feedback on the project**. Pedago Team really tries to make your educational experience better.
