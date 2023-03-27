@@ -13,7 +13,7 @@ The russian version of the task can be found in the repository.
    2.1. [Information](#information)
 3. [Chapter III](#chapter-iii) \
    3.1. [Part 1](#part-1-implementation-of-a-multilayer-perceptron) \
-   3.2. [Part 2](#part-2-research)
+   3.2. [Part 2](#part-2-bonus-research)
 4. [Chapter IV](#chapter-iv)
 
 

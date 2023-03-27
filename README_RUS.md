@@ -11,7 +11,7 @@
    2.1. [Information](#information)
 3. [Chapter III](#chapter-iii) \
    3.1. [Part 1](#part-1-реализация-многослойного-перцептрона) \
-   3.2. [Part 2](#part-2-исследование)
+   3.2. [Part 2](#part-2-дополнительно-исследование)
 4. [Chapter IV](#chapter-iv)
 
 
