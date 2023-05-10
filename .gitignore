@@ -51,4 +51,4 @@ Mkfile.old
 dkms.conf
 
 # MacOS shit
-*DS_Store
+.DS_Store
