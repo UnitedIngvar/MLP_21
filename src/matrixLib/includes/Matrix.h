@@ -6,29 +6,34 @@
 namespace s21 {
   class Matrix {
   private:
-    size_t _rowNumber;
-    size_t _colNumber;
-
     std::vector<std::vector<int>> _matrix;
 
+    void ensureCapacity(size_t x, size_t y) const;
+
   public:
-  Matrix(std::initializer_list<std::initializer_list<int>> const &matrix);
-  Matrix(Matrix const &other);
-  explicit Matrix(size_t rowNumber, size_t colNumber);
+    Matrix(std::initializer_list<std::initializer_list<int>> const &matrix);
+    Matrix(Matrix const &other);
+    explicit Matrix(size_t rowNumber, size_t colNumber);
 
-  int &operator()(std::size_t x, std::size_t y);
-  const int operator()(std::size_t x, std::size_t y) const;
+    size_t getRowNumber() const;
+    size_t getColNumber() const;
 
-  // scalar functions
-  void scalarAdd(int value) const;
-  void scalarMultiply(int value) const;
+    int &operator()(std::size_t x, std::size_t y);
+    const int operator()(std::size_t x, std::size_t y) const;
 
-  // elementwise functions
-  void elemtwiseAdd(Matrix const &matrix) const;
-  void elemtwiseMultiply(Matrix const &matrix) const;
+    // scalar functions
+    void scalarAdd(int value);
+    void scalarMultiply(int value);
 
-  Matrix operator =(Matrix const &other);
-  Matrix operator ==(Matrix const &other);
+    // elementwise functions
+    void elemtwiseAdd(Matrix const &matrix);
+    void elemtwiseMultiply(Matrix const &matrix);
+
+    // matrix functions
+    void matrixMultiply(Matrix const &matrix);
+
+    Matrix operator =(Matrix const &other);
+    bool operator ==(Matrix const &other);
   };
 }
 
