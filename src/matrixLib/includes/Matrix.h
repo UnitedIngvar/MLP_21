@@ -2,11 +2,12 @@
 #define MATRIX_CALCULUS_HPP
 
 #include <vector>
+#include <functional>
 
 namespace s21 {
   class Matrix {
   private:
-    std::vector<std::vector<int>> _matrix;
+    std::vector<std::vector<int>> _data;
 
     void ensureCapacity(size_t x, size_t y) const;
 
@@ -21,18 +22,15 @@ namespace s21 {
     int &operator()(std::size_t x, std::size_t y);
     const int operator()(std::size_t x, std::size_t y) const;
 
-    // scalar functions
     Matrix scalarAdd(int value);
     Matrix scalarMultiply(int value);
-
-    // elementwise functions
     Matrix elemtwiseAdd(Matrix const &other);
     Matrix elemtwiseMultiply(Matrix const &other);
+    Matrix getMatrixProduct(Matrix const &other);
+    Matrix transpose();
+    Matrix map(std::function<int(int)> func);
 
-    // matrix functions
-    Matrix matrixProduct(Matrix const &other);
-
-    Matrix operator=(Matrix const &other);
+    void operator=(Matrix const &other);
     bool operator==(Matrix const &other);
   };
 }
