@@ -12,46 +12,44 @@ Matrix::Matrix(initializer_list<initializer_list<int>> const &matrix) {
   size_t i, j = 0;
   for (auto row_it = matrix.begin(); row_it < matrix.end(); i++, row_it++) {
     for (auto col_it = row_it->begin(); col_it < row_it->end(); j++, col_it++) {
-      _matrix.at(i).at(j) = *col_it;
+      _data.at(i).at(j) = *col_it;
     }
   }
 }
 
 Matrix::Matrix(Matrix const &other) :
-  _matrix(other._matrix) {
+  _data(other._data) {
 }
 
 explicit Matrix::Matrix(size_t rowNumber, size_t colNumber) {
   if (rowNumber <= 0 || colNumber <= 0) {
-    throw invalid_argument("matrix size cant be <= 0");
+    throw invalid_argument("Matrix size cant be <= 0");
   }
 
-  _matrix = vector<vector<int>>(rowNumber);
+  _data = vector<vector<int>>(rowNumber);
   for (size_t i = 0; i < rowNumber; i++) {
-    _matrix.at(i) = vector<int>(colNumber);
+    _data.at(i) = vector<int>(colNumber);
   }
 }
 
 size_t Matrix::getRowNumber() const {
-  return _matrix.size();
+  return _data.size();
 }
 
-// TODO: Под вопрсом.
-// Всегда ли матрицы имеют равное кол-во колонок в каждом ряду?
 size_t Matrix::getColNumber() const {
-  return _matrix.at(0).size();
+  return _data.at(0).size();
 }
 
 int &Matrix::operator()(size_t x, size_t y) {
   ensureCapacity(x, y);
 
-  return _matrix.at(x).at(y);
+  return _data[x][y];
 }
 
 const int Matrix::operator()(size_t x, size_t y) const {
   ensureCapacity(x, y);
 
-  return _matrix.at(x).at(y);
+  return _data[x][y];
 }
 
 // scalar functions
@@ -114,10 +112,10 @@ Matrix Matrix::elemtwiseMultiply(Matrix const &other) {
   return result;
 }
 
-Matrix Matrix::matrixProduct(Matrix const &other) {
+Matrix Matrix::getMatrixProduct(Matrix const &other) {
   if (getColNumber() != other.getRowNumber()) {
     throw invalid_argument(
-      "First matrix's column number must be equal to"
+      "First matrix's column number must be equal to "
       "second matrix's row number");
   }
 
@@ -137,10 +135,36 @@ Matrix Matrix::matrixProduct(Matrix const &other) {
   }
 }
 
-Matrix Matrix::operator=(Matrix const &other) {
+Matrix Matrix::transpose() {
+  Matrix result(getColNumber(), getRowNumber());
 
+  for (size_t i = 0; i < getColNumber(); i++) {
+    for (size_t j = 0; j < getRowNumber(); j++)
+    {
+      result(i, j) = (*this)(j, i);
+    }
+  }
+
+  return result;
+}
+
+Matrix Matrix::map(std::function<int(int)> func) {
+  Matrix result(getRowNumber(), getColNumber());
+
+  for (size_t i = 0; i < getRowNumber(); i++) {
+    for (size_t j = 0; j < getColNumber(); j++)
+    {
+      result(i, j) = func((*this)(j, i));
+    }
+  }
+
+  return result;
+}
+
+void Matrix::operator=(Matrix const &other) {
+  this->_data = other._data;
 }
 
 bool Matrix::operator==(Matrix const &other) {
-
+  return this->_data == other._data;
 }
