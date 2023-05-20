@@ -22,18 +22,18 @@ namespace s21 {
     const int operator()(std::size_t x, std::size_t y) const;
 
     // scalar functions
-    void scalarAdd(int value);
-    void scalarMultiply(int value);
+    Matrix scalarAdd(int value);
+    Matrix scalarMultiply(int value);
 
     // elementwise functions
-    void elemtwiseAdd(Matrix const &matrix);
-    void elemtwiseMultiply(Matrix const &matrix);
+    Matrix elemtwiseAdd(Matrix const &other);
+    Matrix elemtwiseMultiply(Matrix const &other);
 
     // matrix functions
-    void matrixMultiply(Matrix const &matrix);
+    Matrix matrixProduct(Matrix const &other);
 
-    Matrix operator =(Matrix const &other);
-    bool operator ==(Matrix const &other);
+    Matrix operator=(Matrix const &other);
+    bool operator==(Matrix const &other);
   };
 }
 
