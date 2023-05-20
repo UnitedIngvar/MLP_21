@@ -55,61 +55,92 @@ const int Matrix::operator()(size_t x, size_t y) const {
 }
 
 // scalar functions
-void Matrix::scalarAdd(int value) {
+Matrix Matrix::scalarAdd(int value) {
+  Matrix result(getRowNumber(), getColNumber());
+
   for (auto i = 0; i < getRowNumber(); i++) {
     for (size_t j = 0; j < getColNumber(); j++) {
-      _matrix.at(i).at(j) += value;
+      result(i, j) = (*this)(i, j) + value;
     }
   }
+
+  return result;
 }
 
-void Matrix::scalarMultiply(int value) {
+Matrix Matrix::scalarMultiply(int value) {
+  Matrix result(getRowNumber(), getColNumber());
+
   for (auto i = 0; i < getRowNumber(); i++) {
     for (size_t j = 0; j < getColNumber(); j++) {
-      _matrix.at(i).at(j) *= value;
+      result(i, j) = (*this)(i, j) * value;
     }
   }
+
+  return result;
 }
 
 // elementwise functions
-void Matrix::elemtwiseAdd(Matrix const &matrix) {
-  if (matrix.getColNumber() != getColNumber() ||
-      matrix.getRowNumber() != getRowNumber()) {
+Matrix Matrix::elemtwiseAdd(Matrix const &other) {
+  if (other.getColNumber() != getColNumber() ||
+      other.getRowNumber() != getRowNumber()) {
         throw invalid_argument("Matrices should have the same dimensionality");
   }
 
+  Matrix result(getColNumber(), getRowNumber());
+
   for (auto i = 0; i < getRowNumber(); i++) {
     for (auto j = 0; j < getColNumber(); j++) {
-      _matrix.at(i).at(j) += matrix(i, j);
+      result(i, j) = (*this)(i, j) + other(i, j);
+    }
+  }
+
+  return result;
+}
+
+Matrix Matrix::elemtwiseMultiply(Matrix const &other) {
+  if (other.getColNumber() != getColNumber() ||
+      other.getRowNumber() != getRowNumber()) {
+        throw invalid_argument("Matrices should have the same dimensionality");
+  }
+
+  Matrix result(getColNumber(), getRowNumber());
+
+  for (auto i = 0; i < getRowNumber(); i++) {
+    for (auto j = 0; j < getColNumber(); j++) {
+      result(i, j) = (*this)(i, j) * other(i, j);
+    }
+  }
+
+  return result;
+}
+
+Matrix Matrix::matrixProduct(Matrix const &other) {
+  if (getColNumber() != other.getRowNumber()) {
+    throw invalid_argument(
+      "First matrix's column number must be equal to"
+      "second matrix's row number");
+  }
+
+  Matrix result(getRowNumber(), other.getColNumber());
+
+  // TODO: надо подумать, как это можно оптимизировать, если будет время. Кажется, можно
+  for (size_t i = 0; i < getRowNumber(); i++) {
+    for (size_t j = 0; j < other.getColNumber(); j++) {
+      int product = 0;
+
+      for (size_t k = 0; k < getRowNumber(); k++) {
+        product += (*this)(i, k) * other(k, j);
+      }
+
+      result(i, j) = product;
     }
   }
 }
 
-void Matrix::elemtwiseMultiply(Matrix const &matrix) {
-  if (matrix.getColNumber() != getColNumber() ||
-      matrix.getRowNumber() != getRowNumber()) {
-        throw invalid_argument("Matrices should have the same dimensionality");
-  }
-
-  for (auto i = 0; i < getRowNumber(); i++) {
-    for (auto j = 0; j < getColNumber(); j++) {
-      _matrix.at(i).at(j) *= matrix(i, j);
-    }
-  }
-}
-
-void Matrix::matrixMultiply(Matrix const &matrix) {
-  if (getColNumber() != matrix.getRowNumber()) {
-    throw invalid_argument("First matrix's column number must equal second matrix's row number");
-  }
-
+Matrix Matrix::operator=(Matrix const &other) {
 
 }
 
-Matrix Matrix::operator =(Matrix const &other) {
-
-}
-
-bool Matrix::operator ==(Matrix const &other) {
+bool Matrix::operator==(Matrix const &other) {
 
 }
