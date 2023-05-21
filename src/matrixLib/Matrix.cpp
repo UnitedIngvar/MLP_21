@@ -53,7 +53,7 @@ const int Matrix::operator()(size_t x, size_t y) const {
 }
 
 // scalar functions
-Matrix Matrix::scalarAdd(int value) {
+Matrix Matrix::scalarAdd(int value) const {
   Matrix result(getRowNumber(), getColNumber());
 
   for (auto i = 0; i < getRowNumber(); i++) {
@@ -65,7 +65,7 @@ Matrix Matrix::scalarAdd(int value) {
   return result;
 }
 
-Matrix Matrix::scalarMultiply(int value) {
+Matrix Matrix::scalarMultiply(int value) const {
   Matrix result(getRowNumber(), getColNumber());
 
   for (auto i = 0; i < getRowNumber(); i++) {
@@ -78,7 +78,7 @@ Matrix Matrix::scalarMultiply(int value) {
 }
 
 // elementwise functions
-Matrix Matrix::elemtwiseAdd(Matrix const &other) {
+Matrix Matrix::elemtwiseAdd(Matrix const &other) const {
   if (other.getColNumber() != getColNumber() ||
       other.getRowNumber() != getRowNumber()) {
         throw invalid_argument("Matrices should have the same dimensionality");
@@ -95,7 +95,7 @@ Matrix Matrix::elemtwiseAdd(Matrix const &other) {
   return result;
 }
 
-Matrix Matrix::elemtwiseMultiply(Matrix const &other) {
+Matrix Matrix::elemtwiseMultiply(Matrix const &other) const {
   if (other.getColNumber() != getColNumber() ||
       other.getRowNumber() != getRowNumber()) {
         throw invalid_argument("Matrices should have the same dimensionality");
@@ -112,7 +112,7 @@ Matrix Matrix::elemtwiseMultiply(Matrix const &other) {
   return result;
 }
 
-Matrix Matrix::getMatrixProduct(Matrix const &other) {
+Matrix Matrix::getMatrixProduct(Matrix const &other) const {
   if (getColNumber() != other.getRowNumber()) {
     throw invalid_argument(
       "First matrix's column number must be equal to "
@@ -135,26 +135,13 @@ Matrix Matrix::getMatrixProduct(Matrix const &other) {
   }
 }
 
-Matrix Matrix::transpose() {
+Matrix Matrix::transpose() const {
   Matrix result(getColNumber(), getRowNumber());
 
   for (size_t i = 0; i < getColNumber(); i++) {
     for (size_t j = 0; j < getRowNumber(); j++)
     {
       result(i, j) = (*this)(j, i);
-    }
-  }
-
-  return result;
-}
-
-Matrix Matrix::map(std::function<int(int)> func) {
-  Matrix result(getRowNumber(), getColNumber());
-
-  for (size_t i = 0; i < getRowNumber(); i++) {
-    for (size_t j = 0; j < getColNumber(); j++)
-    {
-      result(i, j) = func((*this)(j, i));
     }
   }
 
