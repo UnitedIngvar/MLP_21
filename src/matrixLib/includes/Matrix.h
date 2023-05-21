@@ -1,5 +1,5 @@
-#ifndef MATRIX_CALCULUS_HPP
-#define MATRIX_CALCULUS_HPP
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
 
 #include <vector>
 #include <functional>
@@ -22,17 +22,34 @@ namespace s21 {
     int &operator()(std::size_t x, std::size_t y);
     const int operator()(std::size_t x, std::size_t y) const;
 
-    Matrix scalarAdd(int value);
-    Matrix scalarMultiply(int value);
-    Matrix elemtwiseAdd(Matrix const &other);
-    Matrix elemtwiseMultiply(Matrix const &other);
-    Matrix getMatrixProduct(Matrix const &other);
-    Matrix transpose();
-    Matrix map(std::function<int(int)> func);
+    Matrix scalarAdd(int value) const;
+    Matrix scalarMultiply(int value) const;
+    Matrix elemtwiseAdd(Matrix const &other) const;
+    Matrix elemtwiseMultiply(Matrix const &other) const;
+    Matrix getMatrixProduct(Matrix const &other) const;
+    Matrix transpose() const;
+
+    template <typename T>
+    Matrix map(std::function<T(int)> func) const;
 
     void operator=(Matrix const &other);
     bool operator==(Matrix const &other);
   };
+
+  // Template functions
+  template <typename T>
+  Matrix Matrix::map(std::function<T(int)> func) const {
+    Matrix result(getRowNumber(), getColNumber());
+
+    for (size_t i = 0; i < getRowNumber(); i++) {
+      for (size_t j = 0; j < getColNumber(); j++)
+      {
+        result(i, j) = func((*this)(j, i));
+      }
+    }
+
+    return result;
+  }
 }
 
 #endif
