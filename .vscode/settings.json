@@ -60,6 +60,7 @@
     "mutex": "cpp",
     "ratio": "cpp",
     "stdexcept": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "iostream": "cpp"
   }
 }

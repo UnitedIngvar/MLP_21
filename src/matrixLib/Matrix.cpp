@@ -2,13 +2,13 @@
 using namespace s21;
 using namespace std;
 
-void Matrix::ensureCapacity(size_t x, size_t y) const {
+void Matrix::ensureCapacity(int x, int y) const {
   if (x >= getRowNumber() || y >= getColNumber()) {
     throw invalid_argument("Index exceeds matrix dimensions");
   }
 }
 
-Matrix::Matrix(initializer_list<initializer_list<int>> const &matrix) {
+Matrix::Matrix(initializer_list<initializer_list<float>> const &matrix) {
   size_t i, j = 0;
   for (auto row_it = matrix.begin(); row_it < matrix.end(); i++, row_it++) {
     for (auto col_it = row_it->begin(); col_it < row_it->end(); j++, col_it++) {
@@ -21,43 +21,43 @@ Matrix::Matrix(Matrix const &other) :
   _data(other._data) {
 }
 
-explicit Matrix::Matrix(size_t rowNumber, size_t colNumber) {
+explicit Matrix::Matrix(int rowNumber, int colNumber) {
   if (rowNumber <= 0 || colNumber <= 0) {
     throw invalid_argument("Matrix size cant be <= 0");
   }
 
-  _data = vector<vector<int>>(rowNumber);
-  for (size_t i = 0; i < rowNumber; i++) {
-    _data.at(i) = vector<int>(colNumber);
+  _data = vector<vector<float>>(rowNumber);
+  for (int i = 0; i < rowNumber; i++) {
+    _data.at(i) = vector<float>(colNumber);
   }
 }
 
-size_t Matrix::getRowNumber() const {
+int Matrix::getRowNumber() const {
   return _data.size();
 }
 
-size_t Matrix::getColNumber() const {
+int Matrix::getColNumber() const {
   return _data.at(0).size();
 }
 
-int &Matrix::operator()(size_t x, size_t y) {
+float &Matrix::operator()(int x, int y) {
   ensureCapacity(x, y);
 
   return _data[x][y];
 }
 
-const int Matrix::operator()(size_t x, size_t y) const {
+const float Matrix::operator()(int x, int y) const {
   ensureCapacity(x, y);
 
   return _data[x][y];
 }
 
 // scalar functions
-Matrix Matrix::scalarAdd(int value) const {
+Matrix Matrix::scalarAdd(float value) const {
   Matrix result(getRowNumber(), getColNumber());
 
-  for (auto i = 0; i < getRowNumber(); i++) {
-    for (size_t j = 0; j < getColNumber(); j++) {
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < getColNumber(); j++) {
       result(i, j) = (*this)(i, j) + value;
     }
   }
@@ -65,11 +65,11 @@ Matrix Matrix::scalarAdd(int value) const {
   return result;
 }
 
-Matrix Matrix::scalarMultiply(int value) const {
+Matrix Matrix::scalarMultiply(float value) const {
   Matrix result(getRowNumber(), getColNumber());
 
-  for (auto i = 0; i < getRowNumber(); i++) {
-    for (size_t j = 0; j < getColNumber(); j++) {
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < getColNumber(); j++) {
       result(i, j) = (*this)(i, j) * value;
     }
   }
@@ -78,7 +78,7 @@ Matrix Matrix::scalarMultiply(int value) const {
 }
 
 // elementwise functions
-Matrix Matrix::elemtwiseAdd(Matrix const &other) const {
+Matrix Matrix::add(Matrix const &other) const {
   if (other.getColNumber() != getColNumber() ||
       other.getRowNumber() != getRowNumber()) {
         throw invalid_argument("Matrices should have the same dimensionality");
@@ -86,8 +86,8 @@ Matrix Matrix::elemtwiseAdd(Matrix const &other) const {
 
   Matrix result(getColNumber(), getRowNumber());
 
-  for (auto i = 0; i < getRowNumber(); i++) {
-    for (auto j = 0; j < getColNumber(); j++) {
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < getColNumber(); j++) {
       result(i, j) = (*this)(i, j) + other(i, j);
     }
   }
@@ -95,7 +95,7 @@ Matrix Matrix::elemtwiseAdd(Matrix const &other) const {
   return result;
 }
 
-Matrix Matrix::elemtwiseMultiply(Matrix const &other) const {
+Matrix Matrix::subtract(Matrix const &other) const {
   if (other.getColNumber() != getColNumber() ||
       other.getRowNumber() != getRowNumber()) {
         throw invalid_argument("Matrices should have the same dimensionality");
@@ -103,8 +103,25 @@ Matrix Matrix::elemtwiseMultiply(Matrix const &other) const {
 
   Matrix result(getColNumber(), getRowNumber());
 
-  for (auto i = 0; i < getRowNumber(); i++) {
-    for (auto j = 0; j < getColNumber(); j++) {
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < getColNumber(); j++) {
+      result(i, j) = (*this)(i, j) - other(i, j);
+    }
+  }
+
+  return result;
+}
+
+Matrix Matrix::multiply(Matrix const &other) const {
+  if (other.getColNumber() != getColNumber() ||
+      other.getRowNumber() != getRowNumber()) {
+        throw invalid_argument("Matrices should have the same dimensionality");
+  }
+
+  Matrix result(getColNumber(), getRowNumber());
+
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < getColNumber(); j++) {
       result(i, j) = (*this)(i, j) * other(i, j);
     }
   }
@@ -122,11 +139,11 @@ Matrix Matrix::getMatrixProduct(Matrix const &other) const {
   Matrix result(getRowNumber(), other.getColNumber());
 
   // TODO: надо подумать, как это можно оптимизировать, если будет время. Кажется, можно
-  for (size_t i = 0; i < getRowNumber(); i++) {
-    for (size_t j = 0; j < other.getColNumber(); j++) {
+  for (int i = 0; i < getRowNumber(); i++) {
+    for (int j = 0; j < other.getColNumber(); j++) {
       int product = 0;
 
-      for (size_t k = 0; k < getRowNumber(); k++) {
+      for (int k = 0; k < getRowNumber(); k++) {
         product += (*this)(i, k) * other(k, j);
       }
 
@@ -138,8 +155,8 @@ Matrix Matrix::getMatrixProduct(Matrix const &other) const {
 Matrix Matrix::transpose() const {
   Matrix result(getColNumber(), getRowNumber());
 
-  for (size_t i = 0; i < getColNumber(); i++) {
-    for (size_t j = 0; j < getRowNumber(); j++)
+  for (int i = 0; i < getColNumber(); i++) {
+    for (int j = 0; j < getRowNumber(); j++)
     {
       result(i, j) = (*this)(j, i);
     }

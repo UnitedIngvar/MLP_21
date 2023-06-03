@@ -4,45 +4,48 @@
 #include <vector>
 #include <functional>
 
+using namespace std;
+
 namespace s21 {
   class Matrix {
   private:
-    std::vector<std::vector<int>> _data;
+    std::vector<std::vector<float>> _data;
 
-    void ensureCapacity(size_t x, size_t y) const;
+    void ensureCapacity(int x, int y) const;
 
   public:
-    Matrix(std::initializer_list<std::initializer_list<int>> const &matrix);
+    Matrix(std::initializer_list<std::initializer_list<float>> const &matrix);
     Matrix(Matrix const &other);
-    explicit Matrix(size_t rowNumber, size_t colNumber);
+    explicit Matrix(int rowNumber, int colNumber);
 
-    size_t getRowNumber() const;
-    size_t getColNumber() const;
+    int getRowNumber() const;
+    int getColNumber() const;
 
-    int &operator()(std::size_t x, std::size_t y);
-    const int operator()(std::size_t x, std::size_t y) const;
+    float &operator()(int x, int y);
+    const float operator()(int x, int y) const;
 
-    Matrix scalarAdd(int value) const;
-    Matrix scalarMultiply(int value) const;
-    Matrix elemtwiseAdd(Matrix const &other) const;
-    Matrix elemtwiseMultiply(Matrix const &other) const;
+    Matrix scalarAdd(float value) const;
+    Matrix scalarMultiply(float value) const;
+    Matrix add(Matrix const &other) const;
+    Matrix subtract(Matrix const &other) const;
+    Matrix multiply(Matrix const &other) const;
     Matrix getMatrixProduct(Matrix const &other) const;
     Matrix transpose() const;
 
-    template <typename T>
-    Matrix map(std::function<T(int)> func) const;
+    template <typename T, typename K>
+    Matrix Matrix::map(std::function<T(K)> func) const;
 
     void operator=(Matrix const &other);
     bool operator==(Matrix const &other);
   };
 
   // Template functions
-  template <typename T>
-  Matrix Matrix::map(std::function<T(int)> func) const {
+  template <typename T, typename K>
+  Matrix Matrix::map(std::function<T(K)> func) const {
     Matrix result(getRowNumber(), getColNumber());
 
-    for (size_t i = 0; i < getRowNumber(); i++) {
-      for (size_t j = 0; j < getColNumber(); j++)
+    for (int i = 0; i < getRowNumber(); i++) {
+      for (int j = 0; j < getColNumber(); j++)
       {
         result(i, j) = func((*this)(j, i));
       }
