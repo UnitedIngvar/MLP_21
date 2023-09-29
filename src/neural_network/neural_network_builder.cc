@@ -11,16 +11,19 @@ NeuralNetworkBuilder NeuralNetworkBuilder::BuildNeuralNetwork(){
     return NeuralNetworkBuilder();
 }
 
-void NeuralNetworkBuilder::WithInputNodesCount(int count) {
+NeuralNetworkBuilder &NeuralNetworkBuilder::WithInputNodesCount(int count) {
     input_nodes_count_ = count;
+    return *this;
 }
 
-void NeuralNetworkBuilder::WithOutputNodesCount(int count) {
+NeuralNetworkBuilder &NeuralNetworkBuilder::WithOutputNodesCount(int count) {
     output_nodes_count_ = count;
+    return *this;
 }
 
-void NeuralNetworkBuilder::AddHiddenLayerWithNodeCount(int count) {
+NeuralNetworkBuilder &NeuralNetworkBuilder::AddHiddenLayerWithNodeCount(int count) {
     hidden_nodes_count_.push_back(count);
+    return *this;
 }
 
 NeuralNetwork NeuralNetworkBuilder::Build() {

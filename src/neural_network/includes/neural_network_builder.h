@@ -16,10 +16,11 @@ namespace s21 {
     ~NeuralNetworkBuilder();
 
     static NeuralNetworkBuilder BuildNeuralNetwork();
-    void WithInputNodesCount(int count);
-    void WithOutputNodesCount(int count);
-    void AddHiddenLayerWithNodeCount(int count);
+    NeuralNetworkBuilder &WithInputNodesCount(int count);
+    NeuralNetworkBuilder &WithOutputNodesCount(int count);
+    NeuralNetworkBuilder &AddHiddenLayerWithNodeCount(int count);
     NeuralNetwork Build();
   };
 }
+
 #endif
