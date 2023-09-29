@@ -49,6 +49,3 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
-# MacOS shit
-.DS_Store
