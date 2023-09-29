@@ -22,7 +22,7 @@ NeuralNetwork::NeuralNetwork(
     bias_hidden_.push_back(Matrix::Randomize(hidden_nodes_count[0], 1));
 
     hidden_layers_count_ = hidden_nodes_count.size();
-    for (size_t i = 1; i < hidden_layers_count_; i++){
+    for (int i = 1; i < hidden_layers_count_; i++){
       weights_hidden_.push_back(
         Matrix::Randomize(hidden_nodes_count[i], hidden_nodes_count[i - 1]));
       bias_hidden_.push_back(
@@ -58,7 +58,7 @@ Matrix NeuralNetwork::Feedforward(Matrix const &inputs) const {
 
   // Hidden layers feeding each one's output forward
   Matrix hidden_layers_output = input_hidden_output;
-  for (size_t i = 1; i < hidden_layers_count_; i++) {
+  for (int i = 1; i < hidden_layers_count_; i++) {
     hidden_layers_output = weights_hidden_[i]
       .GetMatrixProduct(hidden_layers_output)
       .Add(bias_hidden_[i]);
@@ -88,7 +88,7 @@ void NeuralNetwork::Train(Matrix const &inputs, Matrix const &expected_outputs) 
     .Map(sigmoid_func);
 
   // Hidden layers feeding each one's output forward
-  for (size_t i = 1; i < hidden_layers_count_; i++) {
+  for (int i = 1; i < hidden_layers_count_; i++) {
     hidden_calc_results[i] = weights_hidden_[i]
       .GetMatrixProduct(hidden_calc_results[i - 1])
       .Add(bias_hidden_[i]);
@@ -125,7 +125,7 @@ void NeuralNetwork::Train(Matrix const &inputs, Matrix const &expected_outputs) 
   Matrix hidden_errors = weights_output_
     .Transpose()
     .GetMatrixProduct(output_errors);
-  for (size_t i = hidden_layers_count_ - 1; i >= 0; i--)
+  for (int i = hidden_layers_count_ - 1; i >= 0; i--)
   {
       Matrix hidden_gradient = hidden_calc_results[i]
         .Map(sigmoid_derivative_func)

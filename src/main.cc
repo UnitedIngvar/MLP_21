@@ -1,4 +1,5 @@
 #include "neural_network.h"
+#include "neural_network_builder.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -6,8 +7,8 @@ using namespace s21;
 using namespace std;
 
 typedef struct input {
-  float target;
   vector<float> inputs;
+  float target;
 } input;
 
 //  Нужно будет нормализовать данные (перевести значения пикселей в диапозон 1 - 0)
@@ -19,7 +20,12 @@ int main(void) {
     input { .inputs = {1.0, 0.0}, .target = 1.0 },
     input { .inputs = {0.0, 0.0}, .target = 0.0 },
   });
-  NeuralNetwork nn(2, 2, 1);
+  NeuralNetwork nn = NeuralNetworkBuilder::BuildNeuralNetwork()
+    .WithInputNodesCount(2)
+    .AddHiddenLayerWithNodeCount(3)
+    .AddHiddenLayerWithNodeCount(2)
+    .WithOutputNodesCount(1)
+    .Build();
 
   for (size_t i = 0; i < 10000; i++) {
     for (size_t j = 0; j < trainingData.size(); j++) {
