@@ -3,9 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "neural_network.h"
-#include "neural_network_builder.h"
-#include "picture_reader.h"
+#include "mlp.h"
 
 using namespace s21;
 using namespace std;
@@ -69,21 +67,13 @@ int main(void) {
   //   }
   // }
 
-  string filename = "../emnist-letters-test.csv";
-  std::ifstream str(filename);
-  if (!str) {
-    throw std::invalid_argument("file is corrupted");
-  }
+  Mlp mlp;
 
-  PictureReader reader;
-  vector<Picture> result = reader.ReadPicture(str);
-  Picture pic = result[0];
+  mlp.CreateNewNeuralNetwork(0.1, 3, nnType::kMatrix);
+  mlp.PassDatasets("../emnist-letters-train.csv", "../emnist-letters-test.csv");
+  auto result = mlp.StartTraining(3);
 
-  std::cout << "This is: " << pic.label << std::endl;
-  for (size_t i = 0; i < pic.map.size(); i++) {
-    if (i % 28 == 0) {
-      std::cout << std::endl;
-    }
-    std::cout << pic.map[i] << " ";
+  for (size_t i = 0; i < result.size(); i++) {
+    std::cout << result[i] << std::endl;
   }
 }

@@ -6,7 +6,7 @@
 using namespace s21;
 using namespace std;
 
-Picture BmpReader::ReadPictureToBlackAndWhite(std::ifstream &filestream) {
+Picture BmpReader::ReadPictureToBlackAndWhite(std::istream &filestream) {
   // заголовк изображения
   BITMAPFILEHEADER fileHeader;
   Read(filestream, fileHeader.bfType, sizeof(fileHeader.bfType));
@@ -133,16 +133,16 @@ Picture BmpReader::ReadPictureToBlackAndWhite(std::ifstream &filestream) {
 
   // чтение
   unsigned int bufer;
-  vector<vector<pixel>> resultMap(fileInfoHeader.biHeight);
+  vector<vector<Pixel>> resultMap(fileInfoHeader.biHeight);
   for (unsigned int i = 0; i < fileInfoHeader.biHeight; i++) {
-    resultMap[i] = vector<pixel>(fileInfoHeader.biWidth);
+    resultMap[i] = vector<Pixel>(fileInfoHeader.biWidth);
 
     for (unsigned int j = 0; j < fileInfoHeader.biWidth; j++) {
       Read(filestream, bufer, fileInfoHeader.biBitCount / 8);
 
-      pixel rgbRed = Bitextract(bufer, fileInfoHeader.biRedMask);
-      pixel rgbGreen = Bitextract(bufer, fileInfoHeader.biGreenMask);
-      pixel rgbBlue = Bitextract(bufer, fileInfoHeader.biBlueMask);
+      Pixel rgbRed = Bitextract(bufer, fileInfoHeader.biRedMask);
+      Pixel rgbGreen = Bitextract(bufer, fileInfoHeader.biGreenMask);
+      Pixel rgbBlue = Bitextract(bufer, fileInfoHeader.biBlueMask);
 
       unsigned char avg = (rgbRed + rgbGreen + rgbBlue) / 3;
       if (avg >= 210) {
@@ -154,12 +154,12 @@ Picture BmpReader::ReadPictureToBlackAndWhite(std::ifstream &filestream) {
       }
       filestream.seekg(linePadding, std::ios_base::cur);
     }
-
-    return Picture(resultMap);
   }
+
+  return Picture(resultMap);
 }
 
-pixel BmpReader::Bitextract(const unsigned int byte, const unsigned int mask) {
+Pixel BmpReader::Bitextract(const unsigned int byte, const unsigned int mask) {
   if (mask == 0) {
     return 0;
   }

@@ -11,14 +11,26 @@ using namespace std;
 
 NeuralNetwork::NeuralNetwork(int input_nodes_count,
                              vector<int> hidden_nodes_count,
-                             int output_nodes_count) {
+                             int output_nodes_count, float learning_rate) {
   if (hidden_nodes_count.size() <= 0) {
-    throw invalid_argument("there should be more than 0 hidden layers");
+    throw invalid_argument("Нельзя создать нейронную сеть без скрытых слоев");
   }
   if (input_nodes_count <= 0 || output_nodes_count <= 0) {
-    throw invalid_argument(
-        "every layer of a neural network should have more than one node");
+    throw invalid_argument("У каждого слоя нейронной сети должны быть нейроны");
   }
+  for (size_t i = 0; i < hidden_nodes_count.size(); i++) {
+    if (hidden_nodes_count[i] <= 0) {
+      throw invalid_argument(
+          "У каждого слоя нейронной сети должны быть нейроны");
+    }
+  }
+
+  if (learning_rate_ > 1) {
+    throw invalid_argument(
+        "Коэффициент скорости обучения должен иметь значение от 0 до 1");
+  }
+
+  learning_rate_ = learning_rate;
 
   weights_hidden_.push_back(
       Matrix::Randomize(hidden_nodes_count[0], input_nodes_count));
@@ -70,8 +82,8 @@ Matrix NeuralNetwork::Feedforward(Matrix const &inputs) const {
   return outputs;
 }
 
-void NeuralNetwork::Train(Matrix const &inputs,
-                          Matrix const &expected_outputs) {
+float NeuralNetwork::Train(Matrix const &inputs,
+                           Matrix const &expected_outputs) {
   function<float(float)> sigmoid_derivative_func =
       std::bind(&NeuralNetwork::SigmoidDerivative, *this, _1);
   function<float(int)> sigmoid_func =
@@ -105,7 +117,7 @@ void NeuralNetwork::Train(Matrix const &inputs,
 
   Matrix output_gradients = outputs.Map(sigmoid_derivative_func)
                                 .Multiply(output_errors)
-                                .ScalarMultiply(kLearningRate);
+                                .ScalarMultiply(learning_rate_);
 
   Matrix hidden_output_weight_deltas =
       output_gradients.GetMatrixProduct(hidden_calcs_output.Transpose());
@@ -119,7 +131,7 @@ void NeuralNetwork::Train(Matrix const &inputs,
     Matrix hidden_gradient = hidden_calc_results[i]
                                  .Map(sigmoid_derivative_func)
                                  .Multiply(hidden_errors)
-                                 .ScalarMultiply(kLearningRate);
+                                 .ScalarMultiply(learning_rate_);
 
     Matrix transposed_inputs =
         i != 0 ? hidden_calc_results[i - 1].Transpose() : inputs.Transpose();
@@ -132,5 +144,13 @@ void NeuralNetwork::Train(Matrix const &inputs,
     hidden_errors =
         weights_hidden_[i].Transpose().GetMatrixProduct(hidden_errors);
   }
+
+  float error_summ = 0.0;
+  for (int i = 0; i < output_errors.GetRowNumber(); i++) {
+    error_summ += output_errors(i, 0);
+  }
+
+  float avg_error = error_summ / output_errors.GetRowNumber();
+  return avg_error;
   /* The end of backpropagation algorithm */
 }
