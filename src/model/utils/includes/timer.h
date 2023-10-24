@@ -7,7 +7,7 @@ namespace s21 {
 class Timer {
   using timep_t = typename std::chrono::steady_clock::time_point;
   timep_t start_ = std::chrono::steady_clock::now();
-  timep_t _end = {};
+  timep_t end_ = {};
 
  public:
   void start();

@@ -4,6 +4,7 @@
 #include <map>
 
 #include "metrics.h"
+#include "metrics_aggregator.h"
 #include "neural_network.h"
 #include "picture.h"
 
@@ -22,7 +23,7 @@ class Mlp {
   const int kInputNodesCount_ = 784;
   const int kOutputNodesCount_ = 26;
 
-  char DetermineGuess(Matrix const &output) const;
+  PicLabel DetermineGuess(Matrix const &output) const;
   Matrix PictureToInput(Picture const *picture) const;
   std::vector<Matrix> PicturesToInputs(std::vector<Picture *> pictures,
                                        int test_count) const;
@@ -40,7 +41,7 @@ class Mlp {
   metrics RunExperiment(float test_percentage);
   char GuessBmpFile(std::string filename);
   char GuessHandwritten(std::vector<int> picture);
-  void LearnWithCrossValidation(int group_count);
+  void StartTrainingWithCrossValidation(int group_count);
   void SaveNeuralNetwork(std::string filename);
   void LoadNeuralNetwork(std::string filename);
 };

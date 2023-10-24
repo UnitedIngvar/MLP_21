@@ -1,11 +1,15 @@
 #include "mlp.h"
 
+#include <unistd.h>
+
 #include <algorithm>
 #include <fstream>
+#include <ostream>
 #include <random>
 #include <utility>
 
 #include "bmp_reader.h"
+#include "metrics_aggregator.h"
 #include "neural_network_builder.h"
 #include "picture_normalizer.h"
 #include "picture_shifter.h"
@@ -29,12 +33,15 @@ Mlp::~Mlp() {
   }
 }
 
-char Mlp::DetermineGuess(Matrix const &output) const {
+PicLabel Mlp::DetermineGuess(Matrix const &output) const {
   int answer_index = 0;
+  float biggest_value = 0;
 
-  for (int i = 1; i <= output.GetRowNumber(); i++) {
-    if (answer_index < output(i, 0)) {
-      answer_index = i;
+  for (int i = 0; i < output.GetRowNumber(); i++) {
+    if (biggest_value < output(i, 0)) {
+      biggest_value = output(i, 0);
+
+      answer_index = i + 1;
     }
   }
 
@@ -48,13 +55,15 @@ Matrix Mlp::PictureToInput(Picture const *picture) const {
   for (size_t j = 0; j < pixels.size(); j++) {
     inputs(j, 0) = pixels[j] / 255;
   }
+
+  return inputs;
 }
 
 vector<Matrix> Mlp::PicturesToInputs(vector<Picture *> pictures,
                                      int count) const {
-  vector<Matrix> all_inputs(pictures.size());
+  vector<Matrix> all_inputs(count);
 
-  for (size_t i = 0; i < count; i++) {
+  for (int i = 0; i < count; i++) {
     all_inputs[i] = PictureToInput(pictures[i]);
   }
 
@@ -125,7 +134,7 @@ void Mlp::PassDatasets(string train_filename, string test_filename) {
   // TODO: распараллелить
   TrainPictureReader reader;
   train_pictures_ = reader.ReadPictures(train_stream);
-  test_pictures_ = reader.ReadPictures(train_stream);
+  test_pictures_ = reader.ReadPictures(test_stream);
 }
 
 map<int, float> Mlp::StartTraining(int epoch_count) {
@@ -137,18 +146,21 @@ map<int, float> Mlp::StartTraining(int epoch_count) {
 
   vector<trainingPair> train_data = GetTrainingData(train_pictures_);
 
-  std::cout << "my ass 1" << std::endl;
   for (int epoch = 0; epoch < epoch_count; epoch++) {
     auto rng = std::default_random_engine{};
     std::shuffle(std::begin(train_data), std::end(train_data), rng);
 
-    std::cout << "my ass 2" << std::endl;
     float error_sum = 0.0;
-    for (size_t i = 0; i < train_data.size(); i++) {
-      error_sum += perceptron_->Train(train_data[i].inputs,
-                                      train_data[i].expected_output);
+    std::cout << "starting epoch " << epoch << std::endl;
+    for (size_t i = 0; i < 2500; i++) {
+      float error = perceptron_->Train(train_data[i].inputs,
+                                       train_data[i].expected_output);
+      if (i % 100 == 0) {
+        std::cout << "i = " << i << ", current error: " << error << std::endl;
+      }
+
+      error_sum += error;
     }
-    std::cout << "my ass 3" << std::endl;
 
     float avg_error = error_sum / train_data.size();
     error_map.emplace(make_pair(epoch, avg_error));
@@ -162,40 +174,22 @@ metrics Mlp::RunExperiment(float test_percentage) {
     throw invalid_argument("Нейросеть не инициализована!");
   }
 
-  int test_count = test_pictures_.size() * test_percentage;
-  vector<Matrix> inputs = PicturesToInputs(test_pictures_, test_count);
-
-  std::map<PicLabel, int> total_class_count;
-  std::map<PicLabel, int> classified_classes_count;
-
-  for (unsigned char label = 'a'; label < 'z'; label++) {
-    total_class_count[label] = 0;
-    classified_classes_count[label] = 0;
-  }
+  MetricsAggregator metrics_aggregator;
 
   auto rng = std::default_random_engine{};
-  std::shuffle(std::begin(inputs), std::end(inputs), rng);
-  for (size_t i = 0; i < test_count; i++) {
-    Matrix outputs = perceptron_->Feedforward(inputs[i]);
+  std::shuffle(std::begin(test_pictures_), std::end(test_pictures_), rng);
+  int test_count = test_pictures_.size() * test_percentage;
+  for (int i = 0; i < test_count; i++) {
+    Matrix intput = PictureToInput(test_pictures_[i]);
+    Matrix outputs = perceptron_->Feedforward(intput);
+
     PicLabel current_label = test_pictures_[i]->GetLabel();
-    char guess = DetermineGuess(outputs);
+    PicLabel guess = DetermineGuess(outputs);
 
-    total_class_count[current_label]++;
-
-    if (guess == current_label) {
-      classified_classes_count[current_label]++;
-    }
+    metrics_aggregator.Insert(current_label, guess);
   }
 
-  // Calculate Accuracy
-  float class_accuracy_sum;
-  for (char label = 'a'; label < 'z'; label++) {
-    class_accuracy_sum +=
-        classified_classes_count[label] / total_class_count[label];
-  }
-  float avg_accuracy = class_accuracy_sum / kOutputNodesCount_;
-
-  return metrics{};
+  return metrics_aggregator.CalculateMetrics();
 }
 
 char Mlp::GuessBmpFile(string filename) {
@@ -226,8 +220,40 @@ char Mlp::GuessHandwritten(vector<int> picture) {
   return 'A';
 }
 
-void Mlp::LearnWithCrossValidation(int group_count) { (void)group_count; }
+void Mlp::StartTrainingWithCrossValidation(int group_count) {
+  (void)group_count;
+}
 
-void Mlp::SaveNeuralNetwork(string filename) { (void)filename; }
+void Mlp::SaveNeuralNetwork(string filename) {
+  if (perceptron_ == NULL) {
+    throw invalid_argument("Нейросеть не инициализована!");
+  }
 
-void Mlp::LoadNeuralNetwork(string filename) { (void)filename; }
+  ofstream file(filename, ofstream::trunc);
+  if (!file) {
+    throw invalid_argument("Не удалось открыть файл " + filename);
+  }
+
+  NeuralNetworkMessage message = perceptron_->ToMessage();
+  message.SerializeToOstream(&file);
+  file.close();
+}
+
+void Mlp::LoadNeuralNetwork(string filename) {
+  ifstream file(filename);
+  if (!file) {
+    throw invalid_argument("Не удалось открыть файл " + filename);
+  }
+
+  NeuralNetworkMessage perceptron_message;
+  perceptron_message.ParseFromIstream(&file);
+
+  std::cout << "balls 1" << std::endl;
+  if (perceptron_ != NULL) {
+    delete perceptron_;
+  }
+
+  std::cout << "balls 2" << std::endl;
+  perceptron_ = NeuralNetwork::FromMessage(perceptron_message);
+  file.close();
+}

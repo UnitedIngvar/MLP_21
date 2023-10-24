@@ -7,9 +7,6 @@ PictureNormalizer::PictureNormalizer() {}
 PictureNormalizer::~PictureNormalizer() {}
 
 Picture PictureNormalizer::Normalize(Picture const &picture) {
-  int height = picture.GetHeight();
-  int width = picture.GetWidth();
-
   Picture scaled_picture =
       picture_scaler_.ScalePicture(picture, kNormalWidth_, kNoramlHeight_);
 

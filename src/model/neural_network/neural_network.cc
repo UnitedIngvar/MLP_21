@@ -5,9 +5,13 @@
 #include <cmath>
 #include <iostream>
 
+#include "neural_network.pb.h"
+
 using namespace s21;
 using namespace std::placeholders;
 using namespace std;
+
+NeuralNetwork::NeuralNetwork() {}
 
 NeuralNetwork::NeuralNetwork(int input_nodes_count,
                              vector<int> hidden_nodes_count,
@@ -24,7 +28,6 @@ NeuralNetwork::NeuralNetwork(int input_nodes_count,
           "У каждого слоя нейронной сети должны быть нейроны");
     }
   }
-
   if (learning_rate_ > 1) {
     throw invalid_argument(
         "Коэффициент скорости обучения должен иметь значение от 0 до 1");
@@ -46,6 +49,18 @@ NeuralNetwork::NeuralNetwork(int input_nodes_count,
   bias_output_ = Matrix::Randomize(output_nodes_count, 1);
   weights_output_ = Matrix::Randomize(
       output_nodes_count, hidden_nodes_count[hidden_layers_count_ - 1]);
+
+  // std::cout << "Neural network created with: " << std::endl;
+  // std::cout << "hidden nodes: " << std::endl;
+  // for (int i = 0; i < hidden_layers_count_; i++) {
+  //   for (int row = 0; row < weights_hidden_[i].GetRowNumber(); row++) {
+  //     for (int col = 0; col < weights_hidden_[i].GetColNumber(); col++) {
+  //       std::cout << weights_hidden_[i](row, col) << " ";
+  //     }
+  //     std::cout << std::endl;
+  //     sleep(10);
+  //   }
+  // }
 }
 
 NeuralNetwork::~NeuralNetwork() {}
@@ -56,7 +71,7 @@ float NeuralNetwork::SigmoidDerivative(float sigmoidResult) const {
   return sigmoidResult * (1 - sigmoidResult);
 }
 
-Matrix NeuralNetwork::Feedforward(Matrix const &inputs) const {
+Matrix NeuralNetwork::Feedforward(Matrix const& inputs) const {
   function<float(int)> sigmoid_func =
       std::bind(&NeuralNetwork::Sigmoid, *this, _1);
 
@@ -71,7 +86,8 @@ Matrix NeuralNetwork::Feedforward(Matrix const &inputs) const {
   for (int i = 1; i < hidden_layers_count_; i++) {
     hidden_layers_output = weights_hidden_[i]
                                .GetMatrixProduct(hidden_layers_output)
-                               .Add(bias_hidden_[i]);
+                               .Add(bias_hidden_[i])
+                               .Map(sigmoid_func);
   }
 
   // Getting the output from
@@ -82,8 +98,8 @@ Matrix NeuralNetwork::Feedforward(Matrix const &inputs) const {
   return outputs;
 }
 
-float NeuralNetwork::Train(Matrix const &inputs,
-                           Matrix const &expected_outputs) {
+float NeuralNetwork::Train(Matrix const& inputs,
+                           Matrix const& expected_outputs) {
   function<float(float)> sigmoid_derivative_func =
       std::bind(&NeuralNetwork::SigmoidDerivative, *this, _1);
   function<float(int)> sigmoid_func =
@@ -102,7 +118,8 @@ float NeuralNetwork::Train(Matrix const &inputs,
   for (int i = 1; i < hidden_layers_count_; i++) {
     hidden_calc_results[i] = weights_hidden_[i]
                                  .GetMatrixProduct(hidden_calc_results[i - 1])
-                                 .Add(bias_hidden_[i]);
+                                 .Add(bias_hidden_[i])
+                                 .Map(sigmoid_func);
   }
 
   // Getting output from neural network
@@ -153,4 +170,58 @@ float NeuralNetwork::Train(Matrix const &inputs,
   float avg_error = error_summ / output_errors.GetRowNumber();
   return avg_error;
   /* The end of backpropagation algorithm */
+}
+
+void NeuralNetwork::SetLearningRate(float rate) {
+  if (rate > 1) {
+    throw invalid_argument(
+        "Коэффициент скорости обучения должен иметь значение от 0 до 1");
+  }
+
+  learning_rate_ = rate;
+}
+
+float NeuralNetwork::GetLearningRate() const { return learning_rate_; }
+
+NeuralNetworkMessage NeuralNetwork::ToMessage() const {
+  NeuralNetworkMessage nn_message;
+
+  nn_message.set_learning_rate(this->learning_rate_);
+  nn_message.set_hidden_layers_count_(this->hidden_layers_count_);
+
+  for (size_t i = 0; i < weights_hidden_.size(); i++) {
+    *(nn_message.add_weights_hidden_()) = weights_hidden_[i].ToMatrixMessage();
+  }
+  *(nn_message.mutable_weights_output_()) = weights_output_.ToMatrixMessage();
+
+  for (size_t i = 0; i < bias_hidden_.size(); i++) {
+    *(nn_message.add_bias_hidden_()) = bias_hidden_[i].ToMatrixMessage();
+  }
+  *(nn_message.mutable_bias_output_()) = bias_output_.ToMatrixMessage();
+
+  return nn_message;
+}
+
+NeuralNetwork* NeuralNetwork::FromMessage(NeuralNetworkMessage const& message) {
+  NeuralNetwork* result = new NeuralNetwork();
+
+  result->learning_rate_ = message.learning_rate();
+  result->hidden_layers_count_ = message.hidden_layers_count_();
+
+  result->weights_hidden_ = vector<Matrix>(message.weights_hidden__size());
+  for (int i = 0; i < message.weights_hidden__size(); i++) {
+    result->weights_hidden_[i] =
+        Matrix::FromMatrixMessage(message.weights_hidden_(i));
+  }
+  result->weights_output_ =
+      Matrix::FromMatrixMessage(message.weights_output_());
+
+  result->bias_hidden_ = vector<Matrix>(message.bias_hidden__size());
+  for (int i = 0; i < message.bias_hidden__size(); i++) {
+    result->bias_hidden_[i] =
+        Matrix::FromMatrixMessage(message.bias_hidden_(i));
+  }
+  result->bias_output_ = Matrix::FromMatrixMessage(message.bias_output_());
+
+  return result;
 }

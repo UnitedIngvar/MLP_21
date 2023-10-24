@@ -68,12 +68,14 @@ int main(void) {
   // }
 
   Mlp mlp;
-
-  mlp.CreateNewNeuralNetwork(0.1, 3, nnType::kMatrix);
+  mlp.CreateNewNeuralNetwork(0.01, 2, nnType::kMatrix);
   mlp.PassDatasets("../emnist-letters-train.csv", "../emnist-letters-test.csv");
-  auto result = mlp.StartTraining(3);
+  auto result = mlp.StartTraining(1);
 
-  for (size_t i = 0; i < result.size(); i++) {
-    std::cout << result[i] << std::endl;
-  }
+  metrics metric = mlp.RunExperiment(0.1);
+  std::cout << "accuracy: " << metric.average_accuracy << std::endl;
+  std::cout << "precision: " << metric.average_precision << std::endl;
+  std::cout << "recall: " << metric.average_recall << std::endl;
+  std::cout << "f measure: " << metric.average_f_measure << std::endl;
+  std::cout << "time elapsed: " << metric.time_elapsed << std::endl;
 }
