@@ -61,15 +61,15 @@ typedef struct {
 class BmpReader {
  private:
   // bit extract
-  pixel Bitextract(const unsigned int byte, const unsigned int mask);
+  Pixel Bitextract(const unsigned int byte, const unsigned int mask);
 
   template <typename Type>
-  void Read(std::ifstream &fp, Type &result, std::size_t size) {
+  void Read(std::istream &fp, Type &result, std::size_t size) {
     fp.read(reinterpret_cast<char *>(&result), size);
   }
 
  public:
-  Picture ReadPictureToBlackAndWhite(std::ifstream &filestream);
+  Picture ReadPictureToBlackAndWhite(std::istream &filestream);
 };
 
 }  // namespace s21

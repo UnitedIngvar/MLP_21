@@ -10,8 +10,7 @@ typedef enum nnType { kMatrix = 0, kGraph = 1 } nnType;
 
 class NeuralNetwork {
  private:
-  // TODO: Поменять в будущем или сделать конфигурируемым (посмотреть в задание)
-  const float kLearningRate = 0.1;
+  float learning_rate_;
 
   int hidden_layers_count_;
 
@@ -26,11 +25,18 @@ class NeuralNetwork {
 
  public:
   NeuralNetwork(int input_nodes_count, std::vector<int> hidden_nodes_count,
-                int output_nodes_count);
+                int output_nodes_count, float learning_rate);
+  NeuralNetwork();
   ~NeuralNetwork();
 
-  Matrix Feedforward(Matrix const &input) const;
-  void Train(Matrix const &inputs, Matrix const &expected_outputs);
+  Matrix Feedforward(Matrix const& input) const;
+  float Train(Matrix const& inputs, Matrix const& expected_outputs);
+
+  float GetLearningRate() const;
+  void SetLearningRate(float rate);
+
+  NeuralNetworkMessage ToMessage() const;
+  static NeuralNetwork* FromMessage(NeuralNetworkMessage const& message);
 };
 }  // namespace s21
 

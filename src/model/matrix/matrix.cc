@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include "iostream"
+#include "neural_network.pb.h"
 
 using namespace s21;
 using namespace std;
@@ -193,6 +194,33 @@ Matrix Matrix::Randomize(int row_number, int col_number) {
   }
 
   return m;
+}
+
+MatrixMessage Matrix::ToMatrixMessage() const {
+  MatrixMessage message;
+
+  for (int i = 0; i < GetRowNumber(); i++) {
+    Vector vec;
+    for (int j = 0; j < GetColNumber(); j++) {
+      vec.add_data_(data_[i][j]);
+    }
+
+    *(message.add_data_()) = vec;
+  }
+
+  return message;
+}
+
+Matrix Matrix::FromMatrixMessage(MatrixMessage const &message) {
+  Matrix result(message.data__size(), message.data_(0).data__size());
+
+  for (int i = 0; i < message.data__size(); i++) {
+    for (int j = 0; j < message.data_(i).data__size(); j++) {
+      result.data_[i][j] = message.data_(i).data_(j);
+    }
+  }
+
+  return result;
 }
 
 ostream &s21::operator<<(ostream &os, Matrix const &m) {

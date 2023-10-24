@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package s21;
+
+message NeuralNetworkMessage {
+    float learning_rate = 1;
+    int32 hidden_layers_count_ = 2;
+    repeated MatrixMessage weights_hidden_ = 3;
+    MatrixMessage weights_output_ = 4;
+    repeated MatrixMessage bias_hidden_ = 5;
+    MatrixMessage bias_output_ = 6;
+}
+
+message MatrixMessage {
+  repeated Vector data_ = 1;
+}
+
+message Vector {
+  repeated float data_ = 1;
+}

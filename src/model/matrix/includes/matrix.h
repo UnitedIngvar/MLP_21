@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 
+#include "neural_network.pb.h"
+
 namespace s21 {
 class Matrix {
  private:
@@ -43,6 +45,9 @@ class Matrix {
   float operator()(int x, int y) const;
 
   static Matrix Randomize(int row_number, int col_number);
+
+  MatrixMessage ToMatrixMessage() const;
+  static Matrix FromMatrixMessage(MatrixMessage const &message);
 };
 
 // Template functions
