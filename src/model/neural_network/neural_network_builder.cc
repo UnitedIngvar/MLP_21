@@ -31,7 +31,7 @@ NeuralNetworkBuilder &NeuralNetworkBuilder::AddHiddenLayerWithNodeCount(
 }
 
 NeuralNetworkBuilder &NeuralNetworkBuilder::WithLearningRate(
-    float learning_rate) {
+    double learning_rate) {
   learning_rate_ = learning_rate;
 
   return *this;

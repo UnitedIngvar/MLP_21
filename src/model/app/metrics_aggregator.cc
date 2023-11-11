@@ -36,10 +36,10 @@ void MetricsAggregator::Insert(PicLabel expected, PicLabel fact) {
 metrics MetricsAggregator::CalculateMetrics() {
   const int classes_count = 26;
 
-  float accuracy_summ = 0.0;
-  float precision_summ = 0.0;
-  float recall_summ = 0.0;
-  float f_measure_summ = 0.0;
+  double accuracy_summ = 0.0;
+  double precision_summ = 0.0;
+  double recall_summ = 0.0;
+  double f_measure_summ = 0.0;
   for (PicLabel label = 'A'; label < 'Z'; label++) {
     std::cout << "for class " << label << ":" << std::endl;
     std::cout << "TP' :" << true_positives_map_[label] << std::endl;
@@ -50,24 +50,24 @@ metrics MetricsAggregator::CalculateMetrics() {
     if ((true_positives_map_[label] + true_negatives_map_[label] +
          false_positives_map_[label] + false_negatives_map_[label]) != 0) {
       accuracy_summ +=
-          float(true_positives_map_[label]) /
-          float(true_positives_map_[label] + true_negatives_map_[label] +
-                false_positives_map_[label] + false_negatives_map_[label]);
+          double(true_positives_map_[label]) /
+          double(true_positives_map_[label] + true_negatives_map_[label] +
+                 false_positives_map_[label] + false_negatives_map_[label]);
     }
 
-    float class_precision = 0.0;
+    double class_precision = 0.0;
     if ((true_positives_map_[label] + false_positives_map_[label]) != 0) {
       class_precision =
-          float(true_positives_map_[label]) /
-          float(true_positives_map_[label] + false_positives_map_[label]);
+          double(true_positives_map_[label]) /
+          double(true_positives_map_[label] + false_positives_map_[label]);
     }
     precision_summ += class_precision;
 
-    float class_recall = 0.0;
+    double class_recall = 0.0;
     if ((true_positives_map_[label] + false_negatives_map_[label]) != 0) {
       class_recall =
-          float(true_positives_map_[label]) /
-          float(true_positives_map_[label] + false_negatives_map_[label]);
+          double(true_positives_map_[label]) /
+          double(true_positives_map_[label] + false_negatives_map_[label]);
     }
     recall_summ += class_recall;
 

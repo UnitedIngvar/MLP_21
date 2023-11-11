@@ -108,7 +108,7 @@ LDFLAGS   = -L$(PROTOBUF_DIR)/lib -lprotobuf -L$(ABSL_DIR)/lib  \
 -labsl_time_zone \
 
 CXX				= g++
-CXXFLAGS		= -Werror -Wall -Wextra -std=c++17
+CXXFLAGS		= -Werror -Wall -Wextra -std=c++17 -O3 -march=native
 AR				= ar -rcs
 
 all:	$(NAME)

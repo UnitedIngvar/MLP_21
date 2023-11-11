@@ -7,6 +7,7 @@
 #include "metrics_aggregator.h"
 #include "neural_network.h"
 #include "picture.h"
+#include "settings.h"
 
 namespace s21 {
 typedef struct trainingPair {
@@ -34,16 +35,16 @@ class Mlp {
   Mlp();
   ~Mlp();
 
-  void CreateNewNeuralNetwork(float learning_rate, int hidden_layer_count,
-                              nnType type);
+  void CreateNewNeuralNetwork(Settings settings, nnType type);
   void PassDatasets(std::string train_filename, std::string test_filename);
-  std::map<int, float> StartTraining(int epoch_count);
-  metrics RunExperiment(float test_percentage);
+  std::map<int, double> StartTraining(int epoch_count);
+  metrics RunExperiment(double test_percentage);
   char GuessBmpFile(std::string filename);
   char GuessHandwritten(std::vector<int> picture);
   void StartTrainingWithCrossValidation(int group_count);
   void SaveNeuralNetwork(std::string filename);
   void LoadNeuralNetwork(std::string filename);
+  void SetLearningRate(double learning_rate);
 };
 }  // namespace s21
 

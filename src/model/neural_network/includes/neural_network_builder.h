@@ -9,7 +9,7 @@ class NeuralNetworkBuilder {
   int input_nodes_count_;
   std::vector<int> hidden_nodes_count_;
   int output_nodes_count_;
-  float learning_rate_ = 0.1;
+  double learning_rate_ = 0.1;
   nnType type_;
 
   NeuralNetworkBuilder();
@@ -22,7 +22,7 @@ class NeuralNetworkBuilder {
   NeuralNetworkBuilder &WithOutputNodesCount(int count);
   NeuralNetworkBuilder &AddHiddenLayerWithNodeCount(int count);
   NeuralNetworkBuilder &OfType(nnType type);
-  NeuralNetworkBuilder &WithLearningRate(float learning_rate);
+  NeuralNetworkBuilder &WithLearningRate(double learning_rate);
   NeuralNetwork *Build();
 };
 }  // namespace s21

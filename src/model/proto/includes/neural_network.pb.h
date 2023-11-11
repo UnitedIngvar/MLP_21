@@ -277,14 +277,14 @@ class NeuralNetworkMessage final :
   ::s21::MatrixMessage* _internal_mutable_bias_output_();
 
   public:
-  // float learning_rate = 1;
+  // double learning_rate = 1;
   void clear_learning_rate() ;
-  float learning_rate() const;
-  void set_learning_rate(float value);
+  double learning_rate() const;
+  void set_learning_rate(double value);
 
   private:
-  float _internal_learning_rate() const;
-  void _internal_set_learning_rate(float value);
+  double _internal_learning_rate() const;
+  void _internal_set_learning_rate(double value);
 
   public:
   // int32 hidden_layers_count_ = 2;
@@ -313,7 +313,7 @@ class NeuralNetworkMessage final :
     ::google::protobuf::RepeatedPtrField< ::s21::MatrixMessage > bias_hidden__;
     ::s21::MatrixMessage* weights_output__;
     ::s21::MatrixMessage* bias_output__;
-    float learning_rate_;
+    double learning_rate_;
     ::int32_t hidden_layers_count__;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -617,22 +617,22 @@ class Vector final :
   enum : int {
     kDataFieldNumber = 1,
   };
-  // repeated float data_ = 1;
+  // repeated double data_ = 1;
   int data__size() const;
   private:
   int _internal_data__size() const;
 
   public:
   void clear_data_() ;
-  float data_(int index) const;
-  void set_data_(int index, float value);
-  void add_data_(float value);
-  const ::google::protobuf::RepeatedField<float>& data_() const;
-  ::google::protobuf::RepeatedField<float>* mutable_data_();
+  double data_(int index) const;
+  void set_data_(int index, double value);
+  void add_data_(double value);
+  const ::google::protobuf::RepeatedField<double>& data_() const;
+  ::google::protobuf::RepeatedField<double>* mutable_data_();
 
   private:
-  const ::google::protobuf::RepeatedField<float>& _internal_data_() const;
-  ::google::protobuf::RepeatedField<float>* _internal_mutable_data_();
+  const ::google::protobuf::RepeatedField<double>& _internal_data_() const;
+  ::google::protobuf::RepeatedField<double>* _internal_mutable_data_();
 
   public:
   // @@protoc_insertion_point(class_scope:s21.Vector)
@@ -645,7 +645,7 @@ class Vector final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::google::protobuf::RepeatedField<float> data__;
+    ::google::protobuf::RepeatedField<double> data__;
     mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -669,23 +669,23 @@ class Vector final :
 
 // NeuralNetworkMessage
 
-// float learning_rate = 1;
+// double learning_rate = 1;
 inline void NeuralNetworkMessage::clear_learning_rate() {
   _impl_.learning_rate_ = 0;
 }
-inline float NeuralNetworkMessage::learning_rate() const {
+inline double NeuralNetworkMessage::learning_rate() const {
   // @@protoc_insertion_point(field_get:s21.NeuralNetworkMessage.learning_rate)
   return _internal_learning_rate();
 }
-inline void NeuralNetworkMessage::set_learning_rate(float value) {
+inline void NeuralNetworkMessage::set_learning_rate(double value) {
   _internal_set_learning_rate(value);
   // @@protoc_insertion_point(field_set:s21.NeuralNetworkMessage.learning_rate)
 }
-inline float NeuralNetworkMessage::_internal_learning_rate() const {
+inline double NeuralNetworkMessage::_internal_learning_rate() const {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return _impl_.learning_rate_;
 }
-inline void NeuralNetworkMessage::_internal_set_learning_rate(float value) {
+inline void NeuralNetworkMessage::_internal_set_learning_rate(double value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   ;
   _impl_.learning_rate_ = value;
@@ -1051,7 +1051,7 @@ MatrixMessage::_internal_mutable_data_() {
 
 // Vector
 
-// repeated float data_ = 1;
+// repeated double data_ = 1;
 inline int Vector::_internal_data__size() const {
   return _internal_data_().size();
 }
@@ -1061,34 +1061,34 @@ inline int Vector::data__size() const {
 inline void Vector::clear_data_() {
   _internal_mutable_data_()->Clear();
 }
-inline float Vector::data_(int index) const {
+inline double Vector::data_(int index) const {
   // @@protoc_insertion_point(field_get:s21.Vector.data_)
   return _internal_data_().Get(index);
 }
-inline void Vector::set_data_(int index, float value) {
+inline void Vector::set_data_(int index, double value) {
   _internal_mutable_data_()->Set(index, value);
   // @@protoc_insertion_point(field_set:s21.Vector.data_)
 }
-inline void Vector::add_data_(float value) {
+inline void Vector::add_data_(double value) {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   _internal_mutable_data_()->Add(value);
   // @@protoc_insertion_point(field_add:s21.Vector.data_)
 }
-inline const ::google::protobuf::RepeatedField<float>& Vector::data_() const {
+inline const ::google::protobuf::RepeatedField<double>& Vector::data_() const {
   // @@protoc_insertion_point(field_list:s21.Vector.data_)
   return _internal_data_();
 }
-inline ::google::protobuf::RepeatedField<float>* Vector::mutable_data_() {
+inline ::google::protobuf::RepeatedField<double>* Vector::mutable_data_() {
   // @@protoc_insertion_point(field_mutable_list:s21.Vector.data_)
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
   return _internal_mutable_data_();
 }
 
-inline const ::google::protobuf::RepeatedField<float>& Vector::_internal_data_() const {
+inline const ::google::protobuf::RepeatedField<double>& Vector::_internal_data_() const {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return _impl_.data__;
 }
-inline ::google::protobuf::RepeatedField<float>* Vector::_internal_mutable_data_() {
+inline ::google::protobuf::RepeatedField<double>* Vector::_internal_mutable_data_() {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return &_impl_.data__;
 }

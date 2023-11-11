@@ -12,13 +12,13 @@
 namespace s21 {
 class Matrix {
  private:
-  std::vector<std::vector<float>> data_;
+  std::vector<std::vector<double>> data_;
 
   void EnsureCapacity(int x, int y) const;
 
  public:
   Matrix();
-  Matrix(std::initializer_list<std::initializer_list<float>> const &matrix);
+  Matrix(std::initializer_list<std::initializer_list<double>> const &matrix);
   Matrix(Matrix const &other);
   explicit Matrix(int row_number, int col_number);
 
@@ -29,26 +29,28 @@ class Matrix {
   int GetRowNumber() const;
   int GetColNumber() const;
 
-  Matrix ScalarAdd(float value) const;
-  Matrix ScalarMultiply(float value) const;
+  Matrix ScalarAdd(double value) const;
+  Matrix ScalarMultiply(double value) const;
   Matrix Add(Matrix const &other) const;
   Matrix Subtract(Matrix const &other) const;
+  Matrix GetHadamardProduct(Matrix const &other) const;
   Matrix Multiply(Matrix const &other) const;
-  Matrix GetMatrixProduct(Matrix const &other) const;
   Matrix Transpose() const;
 
   template <typename T, typename K>
   Matrix Map(std::function<T(K)> func) const;
 
   bool operator==(Matrix const &other);
-  float &operator()(int x, int y);
-  float operator()(int x, int y) const;
+  double &operator()(int x, int y);
+  double operator()(int x, int y) const;
 
   static Matrix Randomize(int row_number, int col_number);
 
   MatrixMessage ToMatrixMessage() const;
   static Matrix FromMatrixMessage(MatrixMessage const &message);
 };
+
+std::ostream &operator<<(std::ostream &os, Matrix const &m);
 
 // Template functions
 template <typename T, typename K>

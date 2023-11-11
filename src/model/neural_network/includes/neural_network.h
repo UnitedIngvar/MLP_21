@@ -3,6 +3,8 @@
 #ifndef NEURAL_NETWORK_H
 #define NEURAL_NETWORK_H
 
+#include <fstream>
+
 #include "matrix.h"
 
 namespace s21 {
@@ -10,7 +12,7 @@ typedef enum nnType { kMatrix = 0, kGraph = 1 } nnType;
 
 class NeuralNetwork {
  private:
-  float learning_rate_;
+  double learning_rate_;
 
   int hidden_layers_count_;
 
@@ -20,20 +22,21 @@ class NeuralNetwork {
   std::vector<Matrix> bias_hidden_;
   Matrix bias_output_;
 
-  float Sigmoid(int x) const;
-  float SigmoidDerivative(float sigmoid_result) const;
+  double Sigmoid(double x) const;
+  double SigmoidDerivative(double sigmoid_result) const;
 
  public:
   NeuralNetwork(int input_nodes_count, std::vector<int> hidden_nodes_count,
-                int output_nodes_count, float learning_rate);
+                int output_nodes_count, double learning_rate);
   NeuralNetwork();
   ~NeuralNetwork();
 
   Matrix Feedforward(Matrix const& input) const;
-  float Train(Matrix const& inputs, Matrix const& expected_outputs);
+  double Train(Matrix const& inputs, Matrix const& expected_outputs,
+               std::ofstream& log, bool debug);
 
-  float GetLearningRate() const;
-  void SetLearningRate(float rate);
+  double GetLearningRate() const;
+  void SetLearningRate(double rate);
 
   NeuralNetworkMessage ToMessage() const;
   static NeuralNetwork* FromMessage(NeuralNetworkMessage const& message);
