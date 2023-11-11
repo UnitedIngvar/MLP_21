@@ -1,7 +1,10 @@
 #include "train_picture_reader.h"
 
+#include <iostream>
 #include <ostream>
 #include <sstream>
+
+#include "unistd.h"
 
 using namespace s21;
 using namespace std;

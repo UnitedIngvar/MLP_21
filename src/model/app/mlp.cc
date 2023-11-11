@@ -1,7 +1,5 @@
 #include "mlp.h"
 
-#include <unistd.h>
-
 #include <algorithm>
 #include <fstream>
 #include <ostream>
@@ -13,6 +11,7 @@
 #include "neural_network_builder.h"
 #include "picture_normalizer.h"
 #include "picture_shifter.h"
+#include "settings.h"
 #include "train_picture_reader.h"
 
 using namespace s21;
@@ -35,7 +34,7 @@ Mlp::~Mlp() {
 
 PicLabel Mlp::DetermineGuess(Matrix const &output) const {
   int answer_index = 0;
-  float biggest_value = 0;
+  double biggest_value = 0;
 
   for (int i = 0; i < output.GetRowNumber(); i++) {
     if (biggest_value < output(i, 0)) {
@@ -53,7 +52,7 @@ Matrix Mlp::PictureToInput(Picture const *picture) const {
 
   Matrix inputs(pixels.size(), 1);
   for (size_t j = 0; j < pixels.size(); j++) {
-    inputs(j, 0) = pixels[j] / 255;
+    inputs(j, 0) = float(pixels[j]) / 255;
   }
 
   return inputs;
@@ -93,9 +92,9 @@ vector<trainingPair> Mlp::GetTrainingData(
   return result;
 }
 
-void Mlp::CreateNewNeuralNetwork(float learning_rate, int hidden_layer_count,
-                                 nnType type) {
-  if (hidden_layer_count > 5 || hidden_layer_count < 2) {
+void Mlp::CreateNewNeuralNetwork(Settings settings, nnType type) {
+  if (settings.hidden_layers_count.size() > 5 ||
+      settings.hidden_layers_count.size() < 2) {
     throw invalid_argument(
         "Количество внутренних слоев перецептрона должно быть от 2 до 5");
   }
@@ -103,14 +102,11 @@ void Mlp::CreateNewNeuralNetwork(float learning_rate, int hidden_layer_count,
   NeuralNetworkBuilder builder = NeuralNetworkBuilder::BuildNeuralNetwork()
                                      .WithInputNodesCount(kInputNodesCount_)
                                      .WithOutputNodesCount(kOutputNodesCount_)
-                                     .WithLearningRate(learning_rate)
+                                     .WithLearningRate(settings.learning_rate)
                                      .OfType(type);
 
-  int previos_layer_node_count = kInputNodesCount_;
-  for (int i = 0; i < hidden_layer_count; i++) {
-    int node_count = previos_layer_node_count * 0.66;
-    builder.AddHiddenLayerWithNodeCount(node_count);
-    previos_layer_node_count = node_count;
+  for (size_t i = 0; i < settings.hidden_layers_count.size(); i++) {
+    builder.AddHiddenLayerWithNodeCount(settings.hidden_layers_count[i]);
   }
 
   if (perceptron_ != NULL) {
@@ -137,39 +133,47 @@ void Mlp::PassDatasets(string train_filename, string test_filename) {
   test_pictures_ = reader.ReadPictures(test_stream);
 }
 
-map<int, float> Mlp::StartTraining(int epoch_count) {
+map<int, double> Mlp::StartTraining(int epoch_count) {
   if (perceptron_ == NULL) {
     throw invalid_argument("Нейросеть не инициализована!");
   }
 
-  map<int, float> error_map;
+  map<int, double> error_map;
 
   vector<trainingPair> train_data = GetTrainingData(train_pictures_);
 
+  ofstream log_file("log");
   for (int epoch = 0; epoch < epoch_count; epoch++) {
     auto rng = std::default_random_engine{};
     std::shuffle(std::begin(train_data), std::end(train_data), rng);
 
-    float error_sum = 0.0;
-    std::cout << "starting epoch " << epoch << std::endl;
-    for (size_t i = 0; i < 2500; i++) {
-      float error = perceptron_->Train(train_data[i].inputs,
-                                       train_data[i].expected_output);
-      if (i % 100 == 0) {
-        std::cout << "i = " << i << ", current error: " << error << std::endl;
+    double error_sum = 0.0;
+    log_file << "starting epoch " << epoch << std::endl;
+    log_file << "current learning rate: " << perceptron_->GetLearningRate()
+             << std::endl;
+    for (size_t i = 0; i < train_data.size(); i++) {
+      bool debug = i % 1000 == 0;
+
+      double error = perceptron_->Train(
+          train_data[i].inputs, train_data[i].expected_output, log_file, debug);
+
+      if (debug) {
+        log_file << "i = " << i << ", current error: " << error << std::endl;
       }
 
       error_sum += error;
     }
 
-    float avg_error = error_sum / train_data.size();
+    double avg_error = error_sum / train_data.size();
     error_map.emplace(make_pair(epoch, avg_error));
+    SaveNeuralNetwork("experiment_epoch_" + std::to_string(epoch));
   }
 
+  log_file.close();
   return error_map;
 }
 
-metrics Mlp::RunExperiment(float test_percentage) {
+metrics Mlp::RunExperiment(double test_percentage) {
   if (perceptron_ == NULL) {
     throw invalid_argument("Нейросеть не инициализована!");
   }
@@ -248,12 +252,18 @@ void Mlp::LoadNeuralNetwork(string filename) {
   NeuralNetworkMessage perceptron_message;
   perceptron_message.ParseFromIstream(&file);
 
-  std::cout << "balls 1" << std::endl;
   if (perceptron_ != NULL) {
     delete perceptron_;
   }
 
-  std::cout << "balls 2" << std::endl;
   perceptron_ = NeuralNetwork::FromMessage(perceptron_message);
   file.close();
+}
+
+void Mlp::SetLearningRate(double learning_rate) {
+  if (perceptron_ == NULL) {
+    throw invalid_argument("Нейросеть не инициализована!");
+  }
+
+  perceptron_->SetLearningRate(learning_rate);
 }

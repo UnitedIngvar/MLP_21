@@ -137,14 +137,14 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_neural_5fnetwork_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\024neural_network.proto\022\003s21\"\371\001\n\024NeuralNe"
-    "tworkMessage\022\025\n\rlearning_rate\030\001 \001(\002\022\034\n\024h"
+    "tworkMessage\022\025\n\rlearning_rate\030\001 \001(\001\022\034\n\024h"
     "idden_layers_count_\030\002 \001(\005\022+\n\017weights_hid"
     "den_\030\003 \003(\0132\022.s21.MatrixMessage\022+\n\017weight"
     "s_output_\030\004 \001(\0132\022.s21.MatrixMessage\022(\n\014b"
     "ias_hidden_\030\005 \003(\0132\022.s21.MatrixMessage\022(\n"
     "\014bias_output_\030\006 \001(\0132\022.s21.MatrixMessage\""
     "+\n\rMatrixMessage\022\032\n\005data_\030\001 \003(\0132\013.s21.Ve"
-    "ctor\"\027\n\006Vector\022\r\n\005data_\030\001 \003(\002b\006proto3"
+    "ctor\"\027\n\006Vector\022\r\n\005data_\030\001 \003(\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_neural_5fnetwork_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_neural_5fnetwork_2eproto = {
@@ -316,9 +316,9 @@ const ::_pbi::TcParseTable<3, 6, 4, 0, 2> NeuralNetworkMessage::_table_ = {
     ::_pbi::TcParser::GenericFallback,  // fallback
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // float learning_rate = 1;
-    {::_pbi::TcParser::FastF32S1,
-     {13, 63, 0, PROTOBUF_FIELD_OFFSET(NeuralNetworkMessage, _impl_.learning_rate_)}},
+    // double learning_rate = 1;
+    {::_pbi::TcParser::FastF64S1,
+     {9, 63, 0, PROTOBUF_FIELD_OFFSET(NeuralNetworkMessage, _impl_.learning_rate_)}},
     // int32 hidden_layers_count_ = 2;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(NeuralNetworkMessage, _impl_.hidden_layers_count__), 63>(),
      {16, 63, 0, PROTOBUF_FIELD_OFFSET(NeuralNetworkMessage, _impl_.hidden_layers_count__)}},
@@ -338,9 +338,9 @@ const ::_pbi::TcParseTable<3, 6, 4, 0, 2> NeuralNetworkMessage::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // float learning_rate = 1;
+    // double learning_rate = 1;
     {PROTOBUF_FIELD_OFFSET(NeuralNetworkMessage, _impl_.learning_rate_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kFloat)},
+    (0 | ::_fl::kFcSingular | ::_fl::kDouble)},
     // int32 hidden_layers_count_ = 2;
     {PROTOBUF_FIELD_OFFSET(NeuralNetworkMessage, _impl_.hidden_layers_count__), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
@@ -372,15 +372,15 @@ const ::_pbi::TcParseTable<3, 6, 4, 0, 2> NeuralNetworkMessage::_table_ = {
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
-  // float learning_rate = 1;
-  static_assert(sizeof(::uint32_t) == sizeof(float),
-                "Code assumes ::uint32_t and float are the same size.");
-  float tmp_learning_rate = this->_internal_learning_rate();
-  ::uint32_t raw_learning_rate;
+  // double learning_rate = 1;
+  static_assert(sizeof(::uint64_t) == sizeof(double),
+                "Code assumes ::uint64_t and double are the same size.");
+  double tmp_learning_rate = this->_internal_learning_rate();
+  ::uint64_t raw_learning_rate;
   memcpy(&raw_learning_rate, &tmp_learning_rate, sizeof(tmp_learning_rate));
   if (raw_learning_rate != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(
+    target = ::_pbi::WireFormatLite::WriteDoubleToArray(
         1, this->_internal_learning_rate(), target);
   }
 
@@ -468,14 +468,14 @@ const ::_pbi::TcParseTable<3, 6, 4, 0, 2> NeuralNetworkMessage::_table_ = {
     }
 
   }
-  // float learning_rate = 1;
-  static_assert(sizeof(::uint32_t) == sizeof(float),
-                "Code assumes ::uint32_t and float are the same size.");
-  float tmp_learning_rate = this->_internal_learning_rate();
-  ::uint32_t raw_learning_rate;
+  // double learning_rate = 1;
+  static_assert(sizeof(::uint64_t) == sizeof(double),
+                "Code assumes ::uint64_t and double are the same size.");
+  double tmp_learning_rate = this->_internal_learning_rate();
+  ::uint64_t raw_learning_rate;
   memcpy(&raw_learning_rate, &tmp_learning_rate, sizeof(tmp_learning_rate));
   if (raw_learning_rate != 0) {
-    total_size += 5;
+    total_size += 9;
   }
 
   // int32 hidden_layers_count_ = 2;
@@ -515,10 +515,10 @@ void NeuralNetworkMessage::MergeImpl(::google::protobuf::Message& to_msg, const 
           from._internal_bias_output_());
     }
   }
-  static_assert(sizeof(::uint32_t) == sizeof(float),
-                "Code assumes ::uint32_t and float are the same size.");
-  float tmp_learning_rate = from._internal_learning_rate();
-  ::uint32_t raw_learning_rate;
+  static_assert(sizeof(::uint64_t) == sizeof(double),
+                "Code assumes ::uint64_t and double are the same size.");
+  double tmp_learning_rate = from._internal_learning_rate();
+  ::uint64_t raw_learning_rate;
   memcpy(&raw_learning_rate, &tmp_learning_rate, sizeof(tmp_learning_rate));
   if (raw_learning_rate != 0) {
     _this->_internal_set_learning_rate(from._internal_learning_rate());
@@ -806,15 +806,15 @@ const ::_pbi::TcParseTable<0, 1, 0, 0, 2> Vector::_table_ = {
     &_Vector_default_instance_._instance,
     ::_pbi::TcParser::GenericFallback,  // fallback
   }, {{
-    // repeated float data_ = 1;
-    {::_pbi::TcParser::FastF32P1,
+    // repeated double data_ = 1;
+    {::_pbi::TcParser::FastF64P1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(Vector, _impl_.data__)}},
   }}, {{
     65535, 65535
   }}, {{
-    // repeated float data_ = 1;
+    // repeated double data_ = 1;
     {PROTOBUF_FIELD_OFFSET(Vector, _impl_.data__), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kPackedFloat)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedDouble)},
   }},
   // no aux_entries
   {{
@@ -828,7 +828,7 @@ const ::_pbi::TcParseTable<0, 1, 0, 0, 2> Vector::_table_ = {
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
-  // repeated float data_ = 1;
+  // repeated double data_ = 1;
   if (this->_internal_data__size() > 0) {
     target = stream->WriteFixedPacked(1, _internal_data_(), target);
   }
@@ -850,9 +850,9 @@ const ::_pbi::TcParseTable<0, 1, 0, 0, 2> Vector::_table_ = {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated float data_ = 1;
+  // repeated double data_ = 1;
   {
-    std::size_t data_size = std::size_t{4} *
+    std::size_t data_size = std::size_t{8} *
         ::_pbi::FromIntSize(this->_internal_data__size())
     ;
     std::size_t tag_size = data_size == 0

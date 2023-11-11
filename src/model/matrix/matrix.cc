@@ -1,6 +1,8 @@
 #include "matrix.h"
 
-#include "iostream"
+#include <iostream>
+#include <random>
+
 #include "neural_network.pb.h"
 
 using namespace s21;
@@ -17,10 +19,10 @@ void Matrix::EnsureCapacity(int row_index, int col_index) const {
 
 Matrix::Matrix() {}
 
-Matrix::Matrix(initializer_list<initializer_list<float>> const &matrix) {
+Matrix::Matrix(initializer_list<initializer_list<double>> const &matrix) {
   int i = 0;
 
-  data_ = vector<vector<float>>(matrix.size());
+  data_ = vector<vector<double>>(matrix.size());
 
   for (auto row_it = matrix.begin(); row_it < matrix.end(); i++, row_it++) {
     size_t row_size = row_it->size();
@@ -29,7 +31,7 @@ Matrix::Matrix(initializer_list<initializer_list<float>> const &matrix) {
       throw std::invalid_argument("matrix rows should have the same size");
     }
 
-    data_.at(i) = vector<float>(row_it->begin(), row_it->end());
+    data_.at(i) = vector<double>(row_it->begin(), row_it->end());
   }
 }
 
@@ -40,9 +42,9 @@ Matrix::Matrix(int row_number, int col_number) {
     throw invalid_argument("Matrix size cant be <= 0");
   }
 
-  data_ = vector<vector<float>>(row_number);
+  data_ = vector<vector<double>>(row_number);
   for (int i = 0; i < row_number; i++) {
-    data_.at(i) = vector<float>(col_number);
+    data_.at(i) = vector<double>(col_number);
   }
 }
 
@@ -51,20 +53,20 @@ int Matrix::GetRowNumber() const { return data_.size(); }
 
 int Matrix::GetColNumber() const { return data_[0].size(); }
 
-float &Matrix::operator()(int row, int col) {
+double &Matrix::operator()(int row, int col) {
   EnsureCapacity(row, col);
 
   return data_[row][col];
 }
 
-float Matrix::operator()(int row, int col) const {
+double Matrix::operator()(int row, int col) const {
   EnsureCapacity(row, col);
 
   return data_[row][col];
 }
 
 // scalar functions
-Matrix Matrix::ScalarAdd(float value) const {
+Matrix Matrix::ScalarAdd(double value) const {
   Matrix result(GetRowNumber(), GetColNumber());
 
   for (int row = 0; row < GetRowNumber(); row++) {
@@ -76,7 +78,7 @@ Matrix Matrix::ScalarAdd(float value) const {
   return result;
 }
 
-Matrix Matrix::ScalarMultiply(float value) const {
+Matrix Matrix::ScalarMultiply(double value) const {
   Matrix result(GetRowNumber(), GetColNumber());
 
   for (int row = 0; row < GetRowNumber(); row++) {
@@ -123,7 +125,7 @@ Matrix Matrix::Subtract(Matrix const &other) const {
   return result;
 }
 
-Matrix Matrix::Multiply(Matrix const &other) const {
+Matrix Matrix::GetHadamardProduct(Matrix const &other) const {
   if (other.GetColNumber() != GetColNumber() ||
       other.GetRowNumber() != GetRowNumber()) {
     throw invalid_argument("Matrices should have the same dimensionality");
@@ -140,7 +142,7 @@ Matrix Matrix::Multiply(Matrix const &other) const {
   return result;
 }
 
-Matrix Matrix::GetMatrixProduct(Matrix const &other) const {
+Matrix Matrix::Multiply(Matrix const &other) const {
   if (GetColNumber() != other.GetRowNumber()) {
     throw invalid_argument(
         "First matrix's column number must be equal to "
@@ -149,11 +151,9 @@ Matrix Matrix::GetMatrixProduct(Matrix const &other) const {
 
   Matrix result(GetRowNumber(), other.GetColNumber());
 
-  // TODO: надо подумать, как это можно оптимизировать, если будет время.
-  // Кажется, можно
   for (int leftRow = 0; leftRow < GetRowNumber(); leftRow++) {
     for (int rightCol = 0; rightCol < other.GetColNumber(); rightCol++) {
-      float product = 0;
+      double product = 0;
 
       for (int k = 0; k < GetColNumber(); k++) {
         product += (*this)(leftRow, k) * other(k, rightCol);
@@ -185,15 +185,23 @@ bool Matrix::operator==(Matrix const &other) {
 }
 
 Matrix Matrix::Randomize(int row_number, int col_number) {
-  Matrix m(row_number, col_number);
+  Matrix result(row_number, col_number);
+  // Calculate the standard deviation based on Xavier formula
+  float sd = 2.0 / (row_number + col_number);
 
-  for (int row = 0; row < row_number; row++) {
-    for (int col = 0; col < col_number; col++) {
-      m(row, col) = rand() / (RAND_MAX + 1.);
+  // Create a random number generator with a normal distribution
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::normal_distribution<float> distribution(0.0, sd);
+
+  // Initialize each element in the matrix with random values
+  for (int i = 0; i < row_number; i++) {
+    for (int j = 0; j < col_number; j++) {
+      result.data_[i][j] = distribution(gen);
     }
   }
 
-  return m;
+  return result;
 }
 
 MatrixMessage Matrix::ToMatrixMessage() const {

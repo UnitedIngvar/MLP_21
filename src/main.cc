@@ -4,12 +4,14 @@
 #include <iostream>
 
 #include "mlp.h"
+#include "settings.h"
+#include "train_picture_reader.h"
 
 using namespace s21;
 using namespace std;
 
 typedef struct input {
-  vector<float> inputs;
+  vector<double> inputs;
   float target;
 } input;
 
@@ -68,11 +70,17 @@ int main(void) {
   // }
 
   Mlp mlp;
-  mlp.CreateNewNeuralNetwork(0.01, 2, nnType::kMatrix);
+
+  Settings settings{.learning_rate = 0.001,
+                    .hidden_layers_count = {200, 150, 100}};
+  mlp.CreateNewNeuralNetwork(settings, nnType::kMatrix);
   mlp.PassDatasets("../emnist-letters-train.csv", "../emnist-letters-test.csv");
-  auto result = mlp.StartTraining(1);
+  auto result = mlp.StartTraining(15);
+
+  mlp.SaveNeuralNetwork("experiment2");
 
   metrics metric = mlp.RunExperiment(0.1);
+
   std::cout << "accuracy: " << metric.average_accuracy << std::endl;
   std::cout << "precision: " << metric.average_precision << std::endl;
   std::cout << "recall: " << metric.average_recall << std::endl;
