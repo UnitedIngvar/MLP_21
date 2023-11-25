@@ -71,8 +71,7 @@ int main(void) {
 
   Mlp mlp;
 
-  Settings settings{.learning_rate = 0.001,
-                    .hidden_layers_count = {200, 150, 100}};
+  Settings settings{.learning_rate = 0.001, .hidden_layers_count = {256, 128}};
   mlp.CreateNewNeuralNetwork(settings, nnType::kMatrix);
   mlp.PassDatasets("../emnist-letters-train.csv", "../emnist-letters-test.csv");
   auto result = mlp.StartTraining(15);
