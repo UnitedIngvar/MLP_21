@@ -93,10 +93,6 @@ double NeuralNetwork::Train(Matrix const& inputs,
   function<double(double)> sigmoid_func =
       std::bind(&NeuralNetwork::Sigmoid, *this, _1);
 
-  // if (debug) {
-  //   std::cout << "inputs :" << std::endl;
-  //   std::cout << inputs << std::endl;
-  // }
   /* Feedforward algorithm with saving itermediate hidden layer calculation
    * results */
   // Input passed to the first hidden layer
@@ -105,18 +101,6 @@ double NeuralNetwork::Train(Matrix const& inputs,
                                .Multiply(inputs)
                                .Add(bias_hidden_[0])
                                .Map(sigmoid_func);
-  // if (debug) {
-  //   std::cout << "weights_hidden_[0]: " << std::endl;
-  //   std::cout << weights_hidden_[0] << std::endl;
-  // }
-  // if (debug) {
-  //   std::cout << "bias_hidden_[0]: " << std::endl;
-  //   std::cout << bias_hidden_[0] << std::endl;
-  // }
-  // if (debug) {
-  //   std::cout << "hidden calc resutls[0]: " << std::endl;
-  //   std::cout << hidden_calc_results[0] << std::endl;
-  // }
 
   // Hidden layers feeding each one's output forward
   for (int i = 1; i < hidden_layers_count_; i++) {
@@ -128,57 +112,27 @@ double NeuralNetwork::Train(Matrix const& inputs,
 
   // Getting output from neural network
   Matrix hidden_calcs_output = hidden_calc_results[hidden_layers_count_ - 1];
-  // std::cout << "hidden calcs output: " << std::endl;
-  // std::cout << hidden_calcs_output << std::endl;
   Matrix outputs = weights_output_.Multiply(hidden_calcs_output)
                        .Add(bias_output_)
                        .Map(sigmoid_func);
   /* The end of feedforward algorithm */
 
-  // if (debug) {
-  //   std::cout << "outputs: " << std::endl;
-  //   std::cout << outputs << std::endl;
-  // }
   /* Backpropogation algorithm */
   Matrix output_errors = expected_outputs.Subtract(outputs);
-
-  // if (debug) {
-  //   std::cout << "output errors: " << std::endl;
-  //   std::cout << output_errors << std::endl;
-  // }
 
   Matrix output_gradients = outputs.Map(sigmoid_derivative_func)
                                 .GetHadamardProduct(output_errors)
                                 .ScalarMultiply(learning_rate_);
 
-  // if (debug) {
-  //   std::cout << "output gradients: " << std::endl;
-  //   std::cout << output_gradients << std::endl;
-  // }
-
   Matrix hidden_output_weight_deltas =
       output_gradients.Multiply(hidden_calcs_output.Transpose());
-
-  // if (debug) {
-  //   std::cout << "hidden_output_weight_deltas: " << std::endl;
-  //   std::cout << hidden_output_weight_deltas << std::endl;
-  // }
 
   weights_output_ = weights_output_.Add(hidden_output_weight_deltas);
   bias_output_ = bias_output_.Add(output_gradients);
 
   Matrix hidden_errors = weights_output_.Transpose().Multiply(output_errors);
 
-  // if (debug) {
-  //   std::cout << "hidden_errors: " << std::endl;
-  //   std::cout << hidden_errors << std::endl;
-  // }
-
   for (int i = hidden_layers_count_ - 1; i >= 0; i--) {
-    // if (debug) {
-    //   std::cout << "hidden_errors " << i << ": " << std::endl;
-    //   std::cout << hidden_errors << std::endl;
-    // }
     Matrix hidden_gradient = hidden_calc_results[i]
                                  .Map(sigmoid_derivative_func)
                                  .GetHadamardProduct(hidden_errors)
