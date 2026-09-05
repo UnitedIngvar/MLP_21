@@ -1,5 +1,7 @@
 #include "picture.h"
 
+#include <stdexcept>
+
 using namespace std;
 using namespace s21;
 

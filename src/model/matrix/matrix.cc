@@ -241,7 +241,7 @@ ostream &s21::operator<<(ostream &os, Matrix const &m) {
       os << m(row, col) << " ";
     }
 
-    std::cout << std::endl;
+    os << std::endl;
   }
 
   os << std::endl;

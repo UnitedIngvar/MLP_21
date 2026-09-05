@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -59,7 +60,7 @@ void TestLearningRateValidation() {
 }
 
 void TestXorLearns() {
-  NeuralNetwork nn(2, {8, 8}, 1, 0.5);
+  NeuralNetwork nn(2, {4}, 1, 0.5);
   std::ofstream log("/dev/null");
 
   const std::vector<std::pair<Matrix, Matrix>> data = {
@@ -70,7 +71,7 @@ void TestXorLearns() {
   };
 
   double last_error = 1.0;
-  for (int epoch = 0; epoch < 4000; ++epoch) {
+  for (int epoch = 0; epoch < 8000; ++epoch) {
     double error_sum = 0.0;
     for (const auto& sample : data) {
       error_sum += nn.Train(sample.first, sample.second, log, false);
@@ -79,7 +80,7 @@ void TestXorLearns() {
   }
 
   std::cout << "xor mse after training: " << last_error << "\n";
-  ExpectTrue(last_error < 0.05, "XOR network must converge");
+  ExpectTrue(last_error < 0.01, "XOR network must converge");
 
   for (const auto& sample : data) {
     Matrix output = nn.Feedforward(sample.first);
@@ -129,8 +130,9 @@ void WriteSyntheticCsv(const std::string& path, int samples_per_class) {
       out << label;
       for (int i = 0; i < 28; ++i) {
         for (int j = 0; j < 28; ++j) {
-          bool ink = (label == 1) ? (j < 10) : (j >= 18);
-          out << ',' << (ink ? 220 : 0);
+          bool horizontal = label == 1 && i < 8;
+          bool vertical = label == 2 && j < 8;
+          out << ',' << ((horizontal || vertical) ? 220 : 0);
         }
       }
       out << '\n';
@@ -148,17 +150,21 @@ void TestMlpLearnsSyntheticLetters() {
   Settings settings{.learning_rate = 0.3, .hidden_layers_count = {32, 16}};
   mlp.CreateNewNeuralNetwork(settings, nnType::kMatrix);
   mlp.PassDatasets(train_path, test_path);
-  std::map<int, double> errors = mlp.StartTraining(5);
+  std::map<int, double> errors = mlp.StartTraining(8);
 
   std::cout << "synthetic mse epoch 0: " << errors[0] << "\n";
-  std::cout << "synthetic mse epoch 4: " << errors[4] << "\n";
-  ExpectTrue(errors[4] < errors[0] / 2.0,
+  std::cout << "synthetic mse epoch 7: " << errors[7] << "\n";
+  ExpectTrue(errors[7] < errors[0] / 2.0,
              "full MLP pipeline must reduce training MSE");
-  ExpectTrue(errors[4] < 0.02,
+  ExpectTrue(errors[7] < 0.02,
              "full MLP pipeline must fit a trivial two-letter dataset");
 
   metrics result = mlp.RunExperiment(1.0);
   std::cout << "synthetic accuracy: " << result.average_accuracy << "\n";
+  for (int epoch = 0; epoch < 8; ++epoch) {
+    std::remove(("experiment_epoch_" + std::to_string(epoch)).c_str());
+  }
+  std::remove("log");
   std::cout << "ok: synthetic letter training\n";
 }
 

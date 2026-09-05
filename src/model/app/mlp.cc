@@ -80,7 +80,7 @@ vector<trainingPair> Mlp::GetTrainingData(
     expected_outputs(current_pic->GetLabel() - LABEL_MAP_SHIFT - 1, 0) = 1;
 
     result[i] =
-        trainingPair{.expected_output = expected_outputs, .inputs = inputs};
+        trainingPair{.inputs = inputs, .expected_output = expected_outputs};
   }
 
   return result;
