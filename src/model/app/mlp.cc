@@ -34,17 +34,16 @@ Mlp::~Mlp() {
 
 PicLabel Mlp::DetermineGuess(Matrix const &output) const {
   int answer_index = 0;
-  double biggest_value = 0;
+  double biggest_value = output(0, 0);
 
-  for (int i = 0; i < output.GetRowNumber(); i++) {
+  for (int i = 1; i < output.GetRowNumber(); i++) {
     if (biggest_value < output(i, 0)) {
       biggest_value = output(i, 0);
-
-      answer_index = i + 1;
+      answer_index = i;
     }
   }
 
-  return answer_index + LABEL_MAP_SHIFT;
+  return answer_index + 1 + LABEL_MAP_SHIFT;
 }
 
 Matrix Mlp::PictureToInput(Picture const *picture) const {
@@ -74,19 +73,14 @@ vector<trainingPair> Mlp::GetTrainingData(
   vector<trainingPair> result(training_pictures.size());
 
   for (size_t i = 0; i < training_pictures.size(); i++) {
-    Picture current_pic = *training_pictures[i];
-    vector<Pixel> pixels = current_pic.GetFlattenedMap();
-
-    Matrix inputs(pixels.size(), 1);
-    for (size_t j = 0; j < pixels.size(); j++) {
-      inputs(j, 0) = pixels[j] / 255;
-    }
+    Picture const *current_pic = training_pictures[i];
+    Matrix inputs = PictureToInput(current_pic);
 
     Matrix expected_outputs(kOutputNodesCount_, 1);
-    expected_outputs(current_pic.GetLabel() - LABEL_MAP_SHIFT - 1, 0) = 1;
+    expected_outputs(current_pic->GetLabel() - LABEL_MAP_SHIFT - 1, 0) = 1;
 
     result[i] =
-        trainingPair{.expected_output = expected_outputs, .inputs = inputs};
+        trainingPair{.inputs = inputs, .expected_output = expected_outputs};
   }
 
   return result;

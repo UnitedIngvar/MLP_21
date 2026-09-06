@@ -29,7 +29,7 @@ vector<Picture *> TrainPictureReader::ReadPictures(
     for (string value; getline(ss, value, delimiter);) {
       if (i >= kPixelCount_) {
         for (size_t j = 0; j < result.size(); j++) {
-          delete &result[j];
+          delete result[j];
         }
         throw invalid_argument(
             "Training set should contain only images with 784 pixels (28x28)");
@@ -40,7 +40,7 @@ vector<Picture *> TrainPictureReader::ReadPictures(
 
     if (i < kPixelCount_) {
       for (size_t j = 0; j < result.size(); j++) {
-        delete &result[j];
+        delete result[j];
       }
       throw invalid_argument(
           "Training set should contain only images with 784 pixels (28x28)");

@@ -12,9 +12,9 @@ typedef enum nnType { kMatrix = 0, kGraph = 1 } nnType;
 
 class NeuralNetwork {
  private:
-  double learning_rate_;
+  double learning_rate_ = 0.0;
 
-  int hidden_layers_count_;
+  int hidden_layers_count_ = 0;
 
   std::vector<Matrix> weights_hidden_;
   Matrix weights_output_;

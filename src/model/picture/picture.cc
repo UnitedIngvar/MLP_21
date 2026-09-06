@@ -1,5 +1,7 @@
 #include "picture.h"
 
+#include <stdexcept>
+
 using namespace std;
 using namespace s21;
 
@@ -22,17 +24,13 @@ Picture::Picture(PicLabel label, int width, int height,
 }
 
 Picture::Picture(std::vector<std::vector<Pixel>> data) {
-  if (data.size() <= 0 || data.at(0).size()) {
+  if (data.empty() || data.at(0).empty()) {
     throw std::invalid_argument(
         "Высота и ширина изображения должны быть положительным значением");
   }
   if (data.size() > 512 || data.at(0).size() > 512) {
     throw std::invalid_argument(
         "Разрешение изображения не должно превышать 512х512");
-  }
-  if (data.size() <= 0 || data.at(0).size()) {
-    throw std::invalid_argument(
-        "Высота и ширина изображения должна быть положительным значением");
   }
 
   height_ = data.size();

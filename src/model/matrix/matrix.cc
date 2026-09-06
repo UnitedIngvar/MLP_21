@@ -1,5 +1,6 @@
 #include "matrix.h"
 
+#include <cmath>
 #include <iostream>
 #include <random>
 
@@ -186,8 +187,8 @@ bool Matrix::operator==(Matrix const &other) {
 
 Matrix Matrix::Randomize(int row_number, int col_number) {
   Matrix result(row_number, col_number);
-  // Calculate the standard deviation based on Xavier formula
-  float sd = 2.0 / (row_number + col_number);
+  // Xavier/Glorot normal: std = sqrt(2 / (fan_in + fan_out))
+  float sd = std::sqrt(2.0 / (row_number + col_number));
 
   // Create a random number generator with a normal distribution
   std::random_device rd;
@@ -240,7 +241,7 @@ ostream &s21::operator<<(ostream &os, Matrix const &m) {
       os << m(row, col) << " ";
     }
 
-    std::cout << std::endl;
+    os << std::endl;
   }
 
   os << std::endl;

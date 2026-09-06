@@ -8,7 +8,7 @@ using namespace std;
 MetricsAggregator::MetricsAggregator() {
   timer_.start();
 
-  for (PicLabel label = 'A'; label < 'Z'; label++) {
+  for (PicLabel label = 'A'; label <= 'Z'; label++) {
     true_positives_map_[label] = 0;
     false_positives_map_[label] = 0;
     true_negatives_map_[label] = 0;
@@ -22,7 +22,7 @@ void MetricsAggregator::Insert(PicLabel expected, PicLabel fact) {
   if (fact == expected) {
     true_positives_map_[expected]++;
 
-    for (PicLabel label = 'A'; label < 'Z'; label++) {
+    for (PicLabel label = 'A'; label <= 'Z'; label++) {
       if (fact != label) {
         true_negatives_map_[label]++;
       }
@@ -40,7 +40,7 @@ metrics MetricsAggregator::CalculateMetrics() {
   double precision_summ = 0.0;
   double recall_summ = 0.0;
   double f_measure_summ = 0.0;
-  for (PicLabel label = 'A'; label < 'Z'; label++) {
+  for (PicLabel label = 'A'; label <= 'Z'; label++) {
     std::cout << "for class " << label << ":" << std::endl;
     std::cout << "TP' :" << true_positives_map_[label] << std::endl;
     std::cout << "TN' :" << true_negatives_map_[label] << std::endl;

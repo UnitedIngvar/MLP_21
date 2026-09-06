@@ -27,7 +27,7 @@ NeuralNetwork::NeuralNetwork(int input_nodes_count,
           "У каждого слоя нейронной сети должны быть нейроны");
     }
   }
-  if (learning_rate_ > 1) {
+  if (learning_rate <= 0.0 || learning_rate > 1.0) {
     throw invalid_argument(
         "Коэффициент скорости обучения должен иметь значение от 0 до 1");
   }
@@ -117,41 +117,43 @@ double NeuralNetwork::Train(Matrix const& inputs,
                        .Map(sigmoid_func);
   /* The end of feedforward algorithm */
 
-  /* Backpropogation algorithm */
+  /* Backpropagation algorithm */
   Matrix output_errors = expected_outputs.Subtract(outputs);
 
-  Matrix output_gradients = outputs.Map(sigmoid_derivative_func)
-                                .GetHadamardProduct(output_errors)
-                                .ScalarMultiply(learning_rate_);
+  Matrix output_deltas = outputs.Map(sigmoid_derivative_func)
+                             .GetHadamardProduct(output_errors);
+  Matrix output_gradients = output_deltas.ScalarMultiply(learning_rate_);
 
   Matrix hidden_output_weight_deltas =
       output_gradients.Multiply(hidden_calcs_output.Transpose());
 
+  Matrix hidden_errors = weights_output_.Transpose().Multiply(output_deltas);
+
   weights_output_ = weights_output_.Add(hidden_output_weight_deltas);
   bias_output_ = bias_output_.Add(output_gradients);
 
-  Matrix hidden_errors = weights_output_.Transpose().Multiply(output_errors);
-
   for (int i = hidden_layers_count_ - 1; i >= 0; i--) {
-    Matrix hidden_gradient = hidden_calc_results[i]
-                                 .Map(sigmoid_derivative_func)
-                                 .GetHadamardProduct(hidden_errors)
-                                 .ScalarMultiply(learning_rate_);
+    Matrix hidden_deltas = hidden_calc_results[i]
+                               .Map(sigmoid_derivative_func)
+                               .GetHadamardProduct(hidden_errors);
+    Matrix hidden_gradient = hidden_deltas.ScalarMultiply(learning_rate_);
 
     Matrix transposed_inputs =
         i != 0 ? hidden_calc_results[i - 1].Transpose() : inputs.Transpose();
     Matrix input_hidden_weight_deltas =
         hidden_gradient.Multiply(transposed_inputs);
 
+    if (i > 0) {
+      hidden_errors = weights_hidden_[i].Transpose().Multiply(hidden_deltas);
+    }
+
     weights_hidden_[i] = weights_hidden_[i].Add(input_hidden_weight_deltas);
     bias_hidden_[i] = bias_hidden_[i].Add(hidden_gradient);
-
-    hidden_errors = weights_hidden_[i].Transpose().Multiply(hidden_errors);
   }
 
   double error_summ = 0.0;
   for (int i = 0; i < output_errors.GetRowNumber(); i++) {
-    error_summ += output_errors(i, 0);
+    error_summ += output_errors(i, 0) * output_errors(i, 0);
   }
 
   if (debug) {
@@ -168,7 +170,7 @@ double NeuralNetwork::Train(Matrix const& inputs,
 }
 
 void NeuralNetwork::SetLearningRate(double rate) {
-  if (rate > 1) {
+  if (rate <= 0.0 || rate > 1.0) {
     throw invalid_argument(
         "Коэффициент скорости обучения должен иметь значение от 0 до 1");
   }

@@ -1,3 +1,8 @@
+# Training run leftovers
+log
+experiment_epoch_*
+tests/test_training
+
 # Prerequisites
 *.d
 

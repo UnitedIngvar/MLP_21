@@ -1,6 +1,8 @@
 #ifndef PICTURE_NORMALIZER_H
 #define PICTURE_NORMALIZER_H
 
+#include <cstdint>
+
 #include "picture.h"
 #include "picture_scaler.h"
 #include "picture_shifter.h"
